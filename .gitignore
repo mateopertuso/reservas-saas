@@ -38,6 +38,15 @@ testem.log
 /typings
 __screenshots__/
 
-# System files
+
+# logs
+yarn-debug.log*
+
+# environment files
+src/environments/environment.development.ts
+src/environments/environment.ts
+
+# OS
 .DS_Store
 Thumbs.db
+
