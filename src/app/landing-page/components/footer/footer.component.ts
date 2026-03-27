@@ -6,32 +6,7 @@ import { EnlacePie } from '../../interfaces/FooterLink.interface';
   selector: 'app-footer',
   standalone: true,
   imports: [CommonModule],
-  template: `
-    <footer class="border-t border-outline-subtle bg-surface">
-      <div
-        class="max-w-6xl mx-auto px-6 py-12 flex flex-col md:flex-row justify-between items-center gap-6"
-      >
-        <div class="text-lg font-bold tracking-tight text-on-surface">
-          Turno<span class="text-on-surface-variant">Simple</span>
-        </div>
-
-        <div class="text-on-surface-variant text-sm">
-          © {{ anioActual }} TurnoSimple. Minimalismo en cada reserva.
-        </div>
-
-        <div class="flex items-center gap-6">
-          <a
-            *ngFor="let enlace of enlacesPie"
-            [href]="enlace.enlace"
-            class="text-on-surface-variant hover:text-on-surface transition-colors duration-200 text-sm"
-          >
-            {{ enlace.etiqueta }}
-          </a>
-        </div>
-      </div>
-    </footer>
-  `,
-  styles: [],
+  templateUrl: './footer.component.html',
 })
 export class FooterComponent {
   anioActual = new Date().getFullYear();

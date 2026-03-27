@@ -23,6 +23,7 @@ export class AgendaStore {
   fechaSeleccionada = signal<string | null>(null);
 
   horarioSeleccionado = signal<string | null>(null);
+  sucursalSeleccionada = signal<any | null>(null);
 
   async cargarAgenda(slug: string) {
     this.loading.set(true);

@@ -1,4 +1,48 @@
-<div class="min-h-screen bg-slate-50 p-6">
+<!-- <div class="min-h-screen flex items-center justify-center bg-slate-50">
+<div class="mb-4 flex items-center justify-between">
+  @if (paso() > 1) {
+    <button (click)="volverPaso()" class="text-sm text-gray-500">
+      ← Volver
+    </button>
+  }
+
+  <span class="text-sm text-gray-400">
+    Paso {{ paso() }} de 7
+  </span>
+</div>
+  <div class="w-full max-w-xl bg-white rounded-2xl p-6 shadow">
+    
+    @if (paso() === 1) {
+      <app-paso-sucursal (siguiente)="siguientePaso()" />
+    }
+
+    @if (paso() === 2) {
+      <app-paso-servicio (siguiente)="siguientePaso()" />
+    }
+
+    @if (paso() === 3) {
+      <app-paso-profesional (siguiente)="siguientePaso()" />
+    }
+
+    @if (paso() === 4) {
+      <app-paso-fecha (siguiente)="siguientePaso()" />
+    }
+
+    @if (paso() === 5) {
+      <app-paso-horario (siguiente)="siguientePaso()" />
+    }
+
+    @if (paso() === 6) {
+      <app-paso-datos (siguiente)="siguientePaso()" />
+    }
+
+    @if (paso() === 7) {
+      <app-paso-confirmacion />
+    }
+  </div>
+</div> -->
+
+<!-- <div class="min-h-screen bg-slate-50 p-6">
   <div class="mx-auto max-w-4xl">
     <h1 class="mb-6 text-3xl font-bold text-slate-900">Agenda pública</h1>
 
@@ -12,7 +56,7 @@
       </div>
     }
 
-    <!-- Empresa -->
+
 
     @if (store.empresa()) {
       <div class="mb-6 rounded-2xl bg-white p-6 shadow-sm">
@@ -26,7 +70,7 @@
       </div>
     }
 
-    <!-- Servicios -->
+
 
     <div class="rounded-2xl bg-white p-6 shadow-sm">
       <h3 class="mb-4 text-lg font-semibold text-slate-900">Servicios</h3>
@@ -53,7 +97,6 @@
       }
     </div>
 
-    <!-- Servicio seleccionado -->
 
     @if (store.servicioSeleccionado()) {
       <div class="mt-6 rounded-2xl bg-white p-6 shadow-sm">
@@ -65,7 +108,7 @@
       </div>
     }
 
-    <!-- Profesionales -->
+
 
     @if (store.profesionales().length) {
       <div class="mt-6 rounded-2xl bg-white p-6 shadow-sm">
@@ -166,4 +209,4 @@
       </div>
     }
   </div>
-</div>
+</div> -->

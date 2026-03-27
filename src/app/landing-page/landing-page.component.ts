@@ -21,18 +21,6 @@ import { FooterComponent } from './components/footer/footer.component';
     CtaComponent,
     FooterComponent,
   ],
-  template: `
-    <div class="bg-surface text-on-surface min-h-screen selection:bg-primary selection:text-on-primary">
-      <app-navbar />
-      <main class="pt-24 md:pt-32">
-        <app-hero />
-        <app-value />
-        <app-how-it-works />
-        <app-pricing />
-        <app-cta />
-      </main>
-      <app-footer />
-    </div>
-  `,
+  templateUrl: './landing-page.component.html',
 })
 export class LandingPageComponent {}
