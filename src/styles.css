@@ -1,2 +1,122 @@
-/* You can add global styles to this file, and also import other style files */
+/* ═══════════════════════════════════════════════════════════
+   TurnoSimple — Global Styles (Tailwind v4)
+   ═══════════════════════════════════════════════════════════ */
+
 @import 'tailwindcss';
+
+/* ── Fuentes: cargadas desde index.html via <link> tags ── */
+
+/* ── Design Tokens (Tailwind v4 @theme) ── */
+@theme {
+  /* Paleta principal */
+  --color-primary: #111111;
+  --color-primary-hover: #333333;
+  --color-on-primary: #ffffff;
+
+  /* Superficies */
+  --color-surface: #fafafa;
+  --color-surface-dim: #f0f0f0;
+  --color-surface-container: #f5f5f5;
+  --color-surface-container-low: #f8f8f8;
+  --color-surface-container-high: #eeeeee;
+  --color-surface-container-highest: #e5e5e5;
+  --color-surface-white: #ffffff;
+
+  /* Textos */
+  --color-on-surface: #111111;
+  --color-on-surface-variant: #666666;
+  --color-outline: #cccccc;
+  --color-outline-subtle: rgba(0, 0, 0, 0.06);
+
+  /* Acentos */
+  --color-accent: #2563eb;
+  --color-accent-soft: #dbeafe;
+  --color-success: #16a34a;
+  --color-success-soft: #dcfce7;
+  --color-error: #dc2626;
+
+  /* Fuentes */
+  --font-sans: 'Inter', system-ui, sans-serif;
+
+  /* Border Radius */
+  --radius-sm: 0.5rem;
+  --radius-md: 0.75rem;
+  --radius-lg: 1rem;
+  --radius-xl: 1.25rem;
+  --radius-2xl: 1.5rem;
+  --radius-full: 9999px;
+
+  /* Sombras */
+  --shadow-soft: 0 1px 3px rgba(0, 0, 0, 0.04), 0 1px 2px rgba(0, 0, 0, 0.06);
+  --shadow-card: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
+  --shadow-elevated: 0 10px 25px -5px rgba(0, 0, 0, 0.08), 0 8px 10px -6px rgba(0, 0, 0, 0.04);
+  --shadow-hero: 0 25px 50px -12px rgba(0, 0, 0, 0.12);
+
+  /* Animaciones */
+  --animate-fade-in: fade-in 0.6s ease-out both;
+  --animate-slide-up: slide-up 0.6s ease-out both;
+  --animate-slide-up-slow: slide-up 0.8s ease-out both;
+  --animate-scale-in: scale-in 0.5s ease-out both;
+}
+
+/* ── Keyframes ── */
+@keyframes fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slide-up {
+  from { opacity: 0; transform: translateY(24px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes scale-in {
+  from { opacity: 0; transform: scale(0.95); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+/* ── Estilos base ── */
+@layer base {
+  body {
+    font-family: 'Inter', system-ui, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  .material-symbols-outlined {
+    font-variation-settings:
+      'FILL' 0,
+      'wght' 400,
+      'GRAD' 0,
+      'opsz' 24;
+  }
+
+  /* Scroll suave global */
+  html {
+    scroll-behavior: smooth;
+  }
+}
+
+/* ── Utilidades custom ── */
+@layer utilities {
+  .glass-effect {
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+  }
+
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+
+  /* Delay helpers para animaciones escalonadas */
+  .delay-100 { animation-delay: 0.1s; }
+  .delay-200 { animation-delay: 0.2s; }
+  .delay-300 { animation-delay: 0.3s; }
+  .delay-400 { animation-delay: 0.4s; }
+  .delay-500 { animation-delay: 0.5s; }
+}
