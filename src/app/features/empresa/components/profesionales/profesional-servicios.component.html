@@ -1,0 +1,46 @@
+<div class="mt-10">
+  <h2 class="text-xl font-semibold mb-4">Asignar servicios a profesionales</h2>
+
+  <!-- Lista -->
+  @for (ps of store.profesionalServicios(); track ps.profesional_id + ps.servicio_id) {
+    <div class="flex justify-between items-center border p-3 rounded mb-2">
+      <div>
+        <p class="font-medium">
+          {{ ps.profesional_nombre }}
+        </p>
+
+        <p class="text-sm text-slate-500">{{ ps.servicio_nombre }} ({{ ps.duracion_min }} min)</p>
+      </div>
+
+      <button (click)="eliminar(ps.profesional_id, ps.servicio_id)" class="text-sm text-red-500">
+        Eliminar
+      </button>
+    </div>
+  }
+
+  <!-- Crear -->
+  <div class="mt-6 space-y-2">
+    <select [(ngModel)]="profesionalId" class="w-full border p-2 rounded">
+      <option value="">Profesional</option>
+      @for (p of store.profesionales(); track p.id) {
+        <option [value]="p.id">{{ p.nombre }}</option>
+      }
+    </select>
+
+    <select [(ngModel)]="servicioId" class="w-full border p-2 rounded">
+      <option value="">Servicio</option>
+      @for (s of store.servicios(); track s.id) {
+        <option [value]="s.id">{{ s.nombre }}</option>
+      }
+    </select>
+
+    <input
+      type="number"
+      [(ngModel)]="duracion"
+      placeholder="Duración (min)"
+      class="w-full border p-2 rounded"
+    />
+
+    <button (click)="crear()" class="bg-black text-white px-4 py-2 rounded">Asignar</button>
+  </div>
+</div>

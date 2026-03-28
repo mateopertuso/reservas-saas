@@ -9,6 +9,7 @@ export class AgendaStore {
   error = signal<string | null>(null);
 
   empresa = signal<any | null>(null);
+  sucursales = signal<any[]>([]);
   servicios = signal<any[]>([]);
 
   servicioSeleccionado = signal<any | null>(null);
@@ -25,6 +26,8 @@ export class AgendaStore {
   horarioSeleccionado = signal<string | null>(null);
   sucursalSeleccionada = signal<any | null>(null);
 
+  reservaCreada = signal<boolean>(false);
+
   async cargarAgenda(slug: string) {
     this.loading.set(true);
     this.error.set(null);
@@ -35,6 +38,7 @@ export class AgendaStore {
       const agenda = Array.isArray(data) ? data[0] : data;
 
       this.empresa.set(agenda?.empresa ?? null);
+      this.sucursales.set(agenda?.sucursales ?? []);
       this.servicios.set(agenda?.servicios ?? []);
     } catch (err: any) {
       this.error.set(err?.message ?? 'Error al cargar la agenda');
@@ -43,15 +47,40 @@ export class AgendaStore {
     }
   }
 
+  seleccionarSucursal(sucursal: any) {
+    this.sucursalSeleccionada.set(sucursal);
+
+    // limpio todo lo que depende de sucursal
+    this.servicioSeleccionado.set(null);
+    this.profesionalSeleccionado.set(null);
+    this.diasDisponibles.set([]);
+    this.horarios.set([]);
+    this.fechaSeleccionada.set(null);
+    this.horarioSeleccionado.set(null);
+  }
+
   async seleccionarServicio(servicio: any) {
     this.servicioSeleccionado.set(servicio);
 
-    const profesionales = await PublicAgendaApi.getProfesionalesServicio(servicio.id);
-    console.log('PROFESIONALES RPC', profesionales);
-    this.profesionales.set(profesionales ?? []);
+    // limpiar inmediatamente
+    this.profesionales.set([]);
+    this.profesionalSeleccionado.set(null);
+    this.diasDisponibles.set([]);
     this.horarios.set([]);
-  }
+    this.fechaSeleccionada.set(null);
+    this.horarioSeleccionado.set(null);
 
+    this.loading.set(true);
+
+    try {
+      const profesionales = await PublicAgendaApi.getProfesionalesServicio(servicio.id);
+      this.profesionales.set(profesionales ?? []);
+    } catch {
+      this.profesionales.set([]);
+    } finally {
+      this.loading.set(false);
+    }
+  }
   async seleccionarProfesional(profesional: any) {
     this.profesionalSeleccionado.set(profesional);
 
@@ -64,7 +93,9 @@ export class AgendaStore {
 
     const mes = `${hoy.getFullYear()}-${String(hoy.getMonth() + 1).padStart(2, '0')}-01`;
 
+    this.loading.set(true);
     await this.cargarDiasDisponibles(mes);
+    this.loading.set(false);
   }
 
   async cargarDiasDisponibles(mes: string) {
@@ -75,16 +106,11 @@ export class AgendaStore {
 
     const dias = await PublicAgendaApi.getDiasDisponibles(profesional.id, servicio.id, mes);
 
-    console.log('DIAS DISPONIBLES', dias);
-    console.log('PARAMS DIAS', profesional.id, servicio.id, mes);
-
     this.mesActual.set(mes);
     this.diasDisponibles.set(dias ?? []);
   }
 
   async seleccionarDia(fecha: string) {
-    console.log('CLICK DIA', fecha);
-
     this.fechaSeleccionada.set(fecha);
 
     const profesional = this.profesionalSeleccionado();
@@ -92,11 +118,17 @@ export class AgendaStore {
 
     if (!profesional || !servicio) return;
 
-    const horarios = await PublicAgendaApi.getDisponibilidad(profesional.id, servicio.id, fecha);
+    this.loading.set(true);
 
-    console.log('HORARIOS RPC', horarios);
+    try {
+      const horarios = await PublicAgendaApi.getDisponibilidad(profesional.id, servicio.id, fecha);
 
-    this.horarios.set(horarios ?? []);
+      this.horarios.set(horarios ?? []);
+    } catch {
+      this.horarios.set([]);
+    } finally {
+      this.loading.set(false);
+    }
   }
 
   async seleccionarHorario(horario: any) {
@@ -110,15 +142,23 @@ export class AgendaStore {
 
     if (!profesional || !servicio || !fechaHora) return;
 
-    const reserva = await PublicAgendaApi.crearReserva({
-      nombre,
-      email,
-      telefono,
-      profesionalId: profesional.id,
-      servicioId: servicio.id,
-      fechaHora,
-    });
+    try {
+      this.loading.set(true);
 
-    console.log('RESERVA CREADA', reserva);
+      await PublicAgendaApi.crearReserva({
+        nombre,
+        email,
+        telefono,
+        profesionalId: profesional.id,
+        servicioId: servicio.id,
+        fechaHora,
+      });
+
+      this.reservaCreada.set(true);
+    } catch (err: any) {
+      this.error.set('No se pudo crear la reserva');
+    } finally {
+      this.loading.set(false);
+    }
   }
 }

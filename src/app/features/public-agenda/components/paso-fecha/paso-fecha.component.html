@@ -1,0 +1,38 @@
+<div>
+  <!-- Título -->
+  <h2 class="text-xl font-semibold text-slate-900 mb-2">Elegí un día</h2>
+
+  <p class="text-sm text-slate-500 mb-6">Seleccioná una fecha disponible</p>
+
+  <!-- Loading -->
+  @if (store.loading()) {
+    <div class="grid grid-cols-3 gap-2">
+      @for (i of [1, 2, 3, 4, 5, 6]; track i) {
+        <div class="h-10 bg-slate-200 rounded animate-pulse"></div>
+      }
+    </div>
+  }
+
+  <!-- Sin días -->
+  @if (!store.loading() && !store.diasDisponibles().length) {
+    <p class="text-sm text-red-500">No hay días disponibles para este profesional</p>
+  }
+
+  <!-- Grid de días -->
+  @if (store.diasDisponibles().length) {
+    <div class="grid grid-cols-3 gap-2">
+      @for (dia of store.diasDisponibles(); track dia) {
+        <button
+          (click)="seleccionarDia(dia)"
+          [ngClass]="{
+            'bg-black text-white': dia === store.fechaSeleccionada(),
+            'border border-slate-200 hover:border-black': dia !== store.fechaSeleccionada(),
+          }"
+          class="py-2 rounded-lg text-sm transition"
+        >
+          {{ dia | date: 'dd/MM' }}
+        </button>
+      }
+    </div>
+  }
+</div>

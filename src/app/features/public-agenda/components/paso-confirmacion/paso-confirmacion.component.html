@@ -1,0 +1,45 @@
+<div class="text-center">
+  <div class="mb-4 flex justify-center">
+    <div class="w-12 h-12 rounded-full bg-green-100 flex items-center justify-center">
+      <span class="text-green-600 text-xl">✔</span>
+    </div>
+  </div>
+
+  <h2 class="text-xl font-semibold text-slate-900 mb-2">Turno reservado con éxito</h2>
+
+  <p class="text-sm text-slate-500 mb-6">Te esperamos en la fecha seleccionada</p>
+
+  <div class="text-left rounded-xl border border-slate-200 p-4 text-sm text-slate-700 space-y-1">
+    <p>
+      <strong>Sucursal:</strong>
+      {{ store.sucursalSeleccionada()?.nombre }}
+    </p>
+
+    <p>
+      <strong>Servicio:</strong>
+      {{ store.servicioSeleccionado()?.nombre }}
+    </p>
+
+    <p>
+      <strong>Profesional:</strong>
+      {{ store.profesionalSeleccionado()?.nombre }}
+    </p>
+
+    <p>
+      <strong>Fecha:</strong>
+      {{ store.fechaSeleccionada() | date: 'dd/MM/yyyy' }}
+    </p>
+
+    <p>
+      <strong>Hora:</strong>
+      {{ store.horarioSeleccionado() | date: 'HH:mm' }}
+    </p>
+  </div>
+
+  <button
+    (click)="volver()"
+    class="mt-6 w-full border border-slate-200 py-2 rounded-lg text-sm hover:border-black transition"
+  >
+    Volver al inicio
+  </button>
+</div>

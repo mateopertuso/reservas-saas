@@ -1,0 +1,58 @@
+<div class="mt-10">
+  <h2 class="text-xl font-semibold mb-4">Disponibilidad</h2>
+
+  <!-- seleccionar profesional -->
+  <select [(ngModel)]="profesionalId" (change)="cargar()" class="w-full border p-2 rounded mb-4">
+    <option value="">Seleccionar profesional</option>
+    @for (p of store.profesionales(); track p.id) {
+      <option [value]="p.id">{{ p.nombre }}</option>
+    }
+  </select>
+
+  <!-- lista -->
+  @for (d of store.disponibilidad(); track d.id) {
+    <div class="border p-3 rounded mb-2">
+      @if (editandoId === d.id) {
+        <input type="date" [(ngModel)]="editFecha" />
+        <input type="time" [(ngModel)]="editInicio" />
+        <input type="time" [(ngModel)]="editFin" />
+
+        <button (click)="guardar(d.id)">Guardar</button>
+        <button (click)="cancelar()">Cancelar</button>
+      } @else {
+        <div class="flex justify-between items-center">
+          <div (click)="editar(d)">
+            <p>{{ d.fecha | date: 'dd/MM/yyyy' }}</p>
+            <p>{{ d.hora_inicio }} - {{ d.hora_fin }}</p>
+          </div>
+
+          <button (click)="eliminar(d.id)" class="text-red-500">Eliminar</button>
+        </div>
+      }
+    </div>
+  }
+
+  <!-- crear -->
+  <div class="mt-6 space-y-2">
+    <input type="date" [(ngModel)]="fecha" class="w-full border p-2 rounded" />
+    <input type="time" [(ngModel)]="inicio" class="w-full border p-2 rounded" />
+    <input type="time" [(ngModel)]="fin" class="w-full border p-2 rounded" />
+
+    <button
+      (click)="crear()"
+      [disabled]="store.loading()"
+      class="bg-black text-white px-4 py-2 rounded disabled:opacity-50"
+    >
+      @if (store.loading()) {
+        Guardando...
+      } @else {
+        Agregar disponibilidad
+      }
+    </button>
+  </div>
+  @if (store.errorDisponibilidad()) {
+    <div class="mb-4 rounded-lg border border-red-200 bg-red-50 p-3 text-sm text-red-700">
+      {{ store.errorDisponibilidad() }}
+    </div>
+  }
+</div>

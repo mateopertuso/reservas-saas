@@ -1,0 +1,38 @@
+<div>
+  <!-- Título -->
+  <h2 class="text-xl font-semibold text-slate-900 mb-2">Elegí un horario</h2>
+
+  <p class="text-sm text-slate-500 mb-6">Horarios disponibles para el día seleccionado</p>
+
+  <!-- Loading -->
+  @if (store.loading()) {
+    <div class="grid grid-cols-3 gap-2">
+      @for (i of [1, 2, 3, 4, 5, 6]; track i) {
+        <div class="h-10 bg-slate-200 rounded animate-pulse"></div>
+      }
+    </div>
+  }
+
+  <!-- Sin horarios -->
+  @if (!store.loading() && !store.horarios().length) {
+    <p class="text-sm text-red-500">No hay horarios disponibles para este día</p>
+  }
+
+  <!-- Grid horarios -->
+  @if (store.horarios().length) {
+    <div class="grid grid-cols-3 gap-2">
+      @for (hora of store.horarios(); track hora) {
+        <button
+          (click)="seleccionarHorario(hora)"
+          [ngClass]="{
+            'bg-black text-white': hora === store.horarioSeleccionado(),
+            'border border-slate-200 hover:border-black': hora !== store.horarioSeleccionado(),
+          }"
+          class="py-2 rounded-lg text-sm transition"
+        >
+          {{ hora | date: 'HH:mm' }}
+        </button>
+      }
+    </div>
+  }
+</div>

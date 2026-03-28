@@ -2,11 +2,26 @@ import { Component, OnInit, inject, signal } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { AgendaStore } from '../../data/agenda.store';
 import { CommonModule } from '@angular/common';
+import { PasoSucursalComponent } from '../../components/paso-sucursal/paso-sucursal.component';
+import { PasoServicioComponent } from '../../components/paso-servicio/paso-servicio.component';
+import { PasoProfesionalComponent } from '../../components/paso-profesional/paso-profesional.component';
+import { PasoFechaComponent } from '../../components/paso-fecha/paso-fecha.component';
+import { PasoHorarioComponent } from '../../components/paso-horario/paso-horario.component';
+import { PasoDatosComponent } from '../../components/paso-datos/paso-datos.component';
+import { PasoConfirmacionComponent } from '../../components/paso-confirmacion/paso-confirmacion.component';
 
 @Component({
   selector: 'app-agenda-page',
-  standalone: true,
-  imports: [CommonModule],
+  imports: [
+    CommonModule,
+    PasoSucursalComponent,
+    PasoServicioComponent,
+    PasoProfesionalComponent,
+    PasoFechaComponent,
+    PasoHorarioComponent,
+    PasoDatosComponent,
+    PasoConfirmacionComponent,
+  ],
   templateUrl: './agenda-page.html',
   styleUrls: ['./agenda-page.css'],
 })

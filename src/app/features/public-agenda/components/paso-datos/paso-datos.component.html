@@ -1,0 +1,52 @@
+<div>
+  <!-- Título -->
+  <h2 class="text-xl font-semibold text-slate-900 mb-2">Completá tus datos</h2>
+
+  <p class="text-sm text-slate-500 mb-6">Para confirmar tu turno</p>
+
+  <!-- Form -->
+  <div class="space-y-4">
+    <input
+      type="text"
+      placeholder="Nombre"
+      [(ngModel)]="nombre"
+      class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-black"
+    />
+
+    <input
+      type="email"
+      placeholder="Email"
+      [(ngModel)]="email"
+      class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-black"
+    />
+
+    <input
+      type="text"
+      placeholder="Teléfono (opcional)"
+      [(ngModel)]="telefono"
+      class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-black"
+    />
+  </div>
+
+  <!-- Resumen -->
+  <div class="mt-6 rounded-xl border border-slate-200 p-4 text-sm text-slate-700 space-y-1">
+    <p><strong>Sucursal:</strong> {{ store.sucursalSeleccionada()?.direccion }}</p>
+    <p><strong>Servicio:</strong> {{ store.servicioSeleccionado()?.nombre }}</p>
+    <p><strong>Profesional:</strong> {{ store.profesionalSeleccionado()?.nombre }}</p>
+    <p><strong>Fecha:</strong> {{ store.fechaSeleccionada() | date: 'dd/MM/yyyy' }}</p>
+    <p><strong>Hora:</strong> {{ store.horarioSeleccionado() | date: 'HH:mm' }}</p>
+  </div>
+
+  <!-- Botón -->
+  <button
+    (click)="confirmar()"
+    [disabled]="store.loading()"
+    class="mt-6 w-full bg-black text-white py-2 rounded-lg text-sm hover:opacity-90 transition disabled:opacity-50"
+  >
+    @if (store.loading()) {
+      Reservando...
+    } @else {
+      Confirmar reserva
+    }
+  </button>
+</div>

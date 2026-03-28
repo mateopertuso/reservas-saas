@@ -3,21 +3,20 @@ import { CommonModule } from '@angular/common';
 import { AgendaStore } from '../../data/agenda.store';
 
 @Component({
-  selector: 'app-paso-sucursal',
+  selector: 'app-paso-profesional',
   standalone: true,
   imports: [CommonModule],
-  templateUrl: './paso-sucursal.component.html',
+  templateUrl: './paso-profesional.component.html',
 })
-export class PasoSucursalComponent {
-  private store = inject(AgendaStore);
+export class PasoProfesionalComponent {
+  store = inject(AgendaStore);
 
   @Output() siguiente = new EventEmitter<void>();
 
-  sucursales = this.store.sucursales;
-  empresa = this.store.empresa;
+  profesionales = this.store.profesionales;
 
-  seleccionarSucursal(sucursal: any) {
-    this.store.sucursalSeleccionada.set(sucursal);
+  async seleccionarProfesional(prof: any) {
+    await this.store.seleccionarProfesional(prof);
     this.siguiente.emit();
   }
 }

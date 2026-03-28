@@ -1,0 +1,52 @@
+<div>
+  <!-- Título -->
+  <h2 class="text-xl font-semibold text-slate-900 mb-2">Elegí un profesional</h2>
+
+  <p class="text-sm text-slate-500 mb-6">Seleccioná quién realizará el servicio</p>
+
+  <!-- skeleton loader-->
+  @if (store.loading()) {
+    <div class="space-y-2">
+      <div class="h-12 bg-slate-200 rounded animate-pulse"></div>
+      <div class="h-12 bg-slate-200 rounded animate-pulse"></div>
+      <div class="h-12 bg-slate-200 rounded animate-pulse"></div>
+    </div>
+  }
+
+  <!-- Edge case: sin profesionales -->
+  @if (!store.loading() && !profesionales().length) {
+    <div class="text-sm text-red-500">No hay profesionales disponibles para este servicio</div>
+  }
+
+  <!-- Lista -->
+  @if (profesionales().length) {
+    <div class="space-y-3">
+      @for (prof of profesionales(); track prof.id) {
+        <div
+          (click)="seleccionarProfesional(prof)"
+          [ngClass]="{
+            'border-black bg-slate-50': prof.id === store.profesionalSeleccionado()?.id,
+          }"
+          class="cursor-pointer rounded-xl border border-slate-200 p-4 hover:border-black hover:shadow-sm transition"
+        >
+          <div class="flex items-center gap-4">
+            <!-- Avatar -->
+            <div
+              class="w-10 h-10 rounded-full bg-slate-200 flex items-center justify-center text-sm font-semibold text-slate-700"
+            >
+              {{ prof.nombre.charAt(0) }}
+            </div>
+
+            <div>
+              <p class="font-medium text-slate-900">
+                {{ prof.nombre }}
+              </p>
+
+              <p class="text-sm text-slate-500">Profesional</p>
+            </div>
+          </div>
+        </div>
+      }
+    </div>
+  }
+</div>

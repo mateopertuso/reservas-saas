@@ -1,0 +1,35 @@
+<div>
+  <!-- Título -->
+  <h2 class="text-xl font-semibold text-slate-900 mb-2">Elegí un servicio</h2>
+
+  <p class="text-sm text-slate-500 mb-6">Seleccioná qué querés agendar</p>
+
+  <!-- Lista -->
+  <div class="space-y-3">
+    @for (servicio of servicios(); track servicio.id) {
+      <div
+        (click)="seleccionarServicio(servicio)"
+        class="cursor-pointer rounded-xl border border-slate-200 p-4 hover:border-black hover:shadow-sm transition"
+      >
+        <div class="flex justify-between items-center">
+          <div>
+            <p class="font-medium text-slate-900">
+              {{ servicio.nombre }}
+            </p>
+
+            @if (servicio.descripcion) {
+              <p class="text-sm text-slate-500">
+                {{ servicio.descripcion }}
+              </p>
+            }
+          </div>
+
+          <!-- opcional -->
+          @if (servicio.duracion_min) {
+            <span class="text-xs text-slate-400"> {{ servicio.duracion_min }} min </span>
+          }
+        </div>
+      </div>
+    }
+  </div>
+</div>

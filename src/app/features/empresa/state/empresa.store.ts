@@ -1,0 +1,132 @@
+import { Injectable, signal } from '@angular/core';
+import { EmpresaApi } from '../services/empresa.api';
+
+@Injectable({
+  providedIn: 'root',
+})
+export class EmpresaStore {
+  loading = signal(false);
+  error = signal<string | null>(null);
+  reservas = signal<any[]>([]);
+  servicios = signal<any[]>([]);
+  profesionalServicios = signal<any[]>([]);
+  profesionales = signal<any[]>([]);
+  disponibilidad = signal<any[]>([]);
+  profesionalSeleccionadoDisponibilidad = signal<string | null>(null);
+  errorDisponibilidad = signal<string | null>(null);
+
+  async cargarReservas(empresaId: string) {
+    this.loading.set(true);
+    this.error.set(null);
+
+    try {
+      const data = await EmpresaApi.getReservas(empresaId);
+      this.reservas.set(data);
+    } catch (err: any) {
+      this.error.set('No se pudieron cargar las reservas');
+      this.reservas.set([]);
+    } finally {
+      this.loading.set(false);
+    }
+  }
+
+  async cancelarReserva(id: string, empresaId: string) {
+    await EmpresaApi.cancelarReservaEmpresa(id);
+    await this.cargarReservas(empresaId);
+  }
+
+  async cargarServicios(empresaId: string) {
+    this.loading.set(true);
+
+    try {
+      const data = await EmpresaApi.getServicios(empresaId);
+      this.servicios.set(data);
+    } finally {
+      this.loading.set(false);
+    }
+  }
+
+  async crearServicio(payload: any, empresaId: string) {
+    await EmpresaApi.crearServicio(payload);
+    await this.cargarServicios(empresaId);
+  }
+
+  async eliminarServicio(id: string, empresaId: string) {
+    await EmpresaApi.eliminarServicio(id);
+    await this.cargarServicios(empresaId);
+  }
+
+  async cargarProfesionalServicios(empresaId: string) {
+    const data = await EmpresaApi.getProfesionalServicios(empresaId);
+    this.profesionalServicios.set(data);
+  }
+
+  async asignarServicio(profId: string, servId: string, duracion: number, empresaId: string) {
+    await EmpresaApi.upsertProfesionalServicio({
+      profesionalId: profId,
+      servicioId: servId,
+      duracion,
+    });
+
+    await this.cargarProfesionalServicios(empresaId);
+  }
+
+  async eliminarAsignacion(profId: string, servId: string, empresaId: string) {
+    await EmpresaApi.eliminarProfesionalServicio(profId, servId);
+    await this.cargarProfesionalServicios(empresaId);
+  }
+
+  async cargarProfesionales(empresaId: string) {
+    const data = await EmpresaApi.getProfesionales(empresaId);
+    this.profesionales.set(data ?? []);
+  }
+
+  async cargarDisponibilidad(profId: string) {
+    this.profesionalSeleccionadoDisponibilidad.set(profId);
+
+    const data = await EmpresaApi.getDisponibilidadProfesional(profId);
+    this.disponibilidad.set(data);
+  }
+
+  async crearDisponibilidad(payload: any) {
+    this.errorDisponibilidad.set(null);
+
+    try {
+      await EmpresaApi.crearDisponibilidad(payload);
+
+      if (this.profesionalSeleccionadoDisponibilidad()) {
+        await this.cargarDisponibilidad(this.profesionalSeleccionadoDisponibilidad()!);
+      }
+    } catch (err: any) {
+      this.errorDisponibilidad.set(err?.message ?? 'Error al crear disponibilidad');
+    }
+  }
+
+  async eliminarDisponibilidad(id: string) {
+    this.errorDisponibilidad.set(null);
+
+    try {
+      await EmpresaApi.eliminarDisponibilidad(id);
+
+      if (this.profesionalSeleccionadoDisponibilidad()) {
+        await this.cargarDisponibilidad(this.profesionalSeleccionadoDisponibilidad()!);
+      }
+    } catch (err: any) {
+      this.errorDisponibilidad.set(err?.message ?? 'Error al eliminar disponibilidad');
+    }
+  }
+
+  async actualizarDisponibilidad(payload: any) {
+    this.errorDisponibilidad.set(null);
+
+    try {
+      await EmpresaApi.actualizarDisponibilidad(payload);
+
+      if (this.profesionalSeleccionadoDisponibilidad()) {
+        await this.cargarDisponibilidad(this.profesionalSeleccionadoDisponibilidad()!);
+      }
+    } catch (err: any) {
+      this.errorDisponibilidad.set(err?.message ?? 'Error al actualizar disponibilidad');
+    }
+  }
+}
