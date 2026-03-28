@@ -5,6 +5,7 @@ import { ServiciosComponent } from '../components/servicios/servicios.component'
 import { ProfesionalServiciosComponent } from '../components/profesionales/profesional-servicios.component';
 import { DisponibilidadComponent } from '../components/disponibilidad/disponibilidad.component';
 import { ReservasComponent } from '../components/reservas/reservas.component';
+import { SessionService } from '../../auth/services/session.service';
 
 @Component({
   standalone: true,
@@ -21,17 +22,20 @@ import { ReservasComponent } from '../components/reservas/reservas.component';
 export class DashboardPage implements OnInit {
   store = inject(EmpresaStore);
 
+  constructor(private session: SessionService) {}
+
   empresaId = '3b80b251-1581-438e-a4fb-9dec140b9039';
 
   ngOnInit(): void {
-    this.store.cargarReservas(this.empresaId);
+    console.log(this.session.context());
+    this.store.cargarReservas();
     this.store.cargarServicios(this.empresaId);
     this.store.cargarProfesionales(this.empresaId);
     this.store.cargarProfesionalServicios(this.empresaId);
   }
 
   cancelar(id: string) {
-    this.store.cancelarReserva(id, this.empresaId);
+    this.store.cancelarReserva(id);
     console.log('ID RESERVA', id);
   }
 }

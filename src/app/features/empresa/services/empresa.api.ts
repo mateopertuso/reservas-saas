@@ -1,14 +1,12 @@
 import { supabase } from '../../../core/supabase/supabase.client';
 
 export class EmpresaApi {
-  static async getReservas(empresaId: string) {
-    const { data, error } = await supabase.rpc('get_reservas_empresa', {
-      p_empresa: empresaId,
-    });
+  static async getReservas() {
+    const { data, error } = await supabase.rpc('get_mis_reservas');
 
     if (error) {
       console.error('GET RESERVAS EMPRESA', error);
-      return [];
+      throw error;
     }
 
     return data ?? [];
@@ -138,5 +136,27 @@ export class EmpresaApi {
     });
 
     if (error) throw error;
+  }
+
+  static async crearProfesional(nombre: string, sucursalId: string) {
+    const { data, error } = await supabase.rpc('crear_profesional_empresa', {
+      p_nombre: nombre,
+      p_sucursal: sucursalId,
+    });
+
+    if (error) {
+      console.error('CREAR PROFESIONAL', error);
+      throw error;
+    }
+
+    return data;
+  }
+
+  static async getSucursales() {
+    const { data, error } = await supabase.rpc('get_sucursales_mias');
+
+    if (error) throw error;
+
+    return data;
   }
 }

@@ -2,6 +2,7 @@ import { Component, inject } from '@angular/core';
 import { EmpresaStore } from '../../state/empresa.store';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
+import { EmpresaApi } from '../../services/empresa.api';
 
 @Component({
   standalone: true,
@@ -17,6 +18,14 @@ export class ProfesionalServiciosComponent {
   profesionalId = '';
   servicioId = '';
   duracion = 30;
+  nombreNuevo = '';
+  sucursalSeleccionada = '';
+  sucursales: any[] = [];
+
+  async ngOnInit() {
+    console.log('sucursales: ', this.sucursales);
+    this.sucursales = await EmpresaApi.getSucursales();
+  }
 
   crear() {
     if (!this.profesionalId || !this.servicioId) return;
@@ -26,5 +35,22 @@ export class ProfesionalServiciosComponent {
 
   eliminar(profId: string, servId: string) {
     this.store.eliminarAsignacion(profId, servId, this.empresaId);
+  }
+
+  async crearProfesional() {
+    if (!this.nombreNuevo || !this.sucursalSeleccionada) {
+      console.warn('Faltan datos');
+      return;
+    }
+
+    try {
+      await this.store.crearProfesional(this.nombreNuevo, this.sucursalSeleccionada);
+
+      this.nombreNuevo = '';
+
+      console.log('Profesional creado');
+    } catch (e) {
+      console.error(e);
+    }
   }
 }

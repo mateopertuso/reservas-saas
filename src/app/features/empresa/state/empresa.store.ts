@@ -15,12 +15,12 @@ export class EmpresaStore {
   profesionalSeleccionadoDisponibilidad = signal<string | null>(null);
   errorDisponibilidad = signal<string | null>(null);
 
-  async cargarReservas(empresaId: string) {
+  async cargarReservas() {
     this.loading.set(true);
     this.error.set(null);
 
     try {
-      const data = await EmpresaApi.getReservas(empresaId);
+      const data = await EmpresaApi.getReservas();
       this.reservas.set(data);
     } catch (err: any) {
       this.error.set('No se pudieron cargar las reservas');
@@ -30,9 +30,9 @@ export class EmpresaStore {
     }
   }
 
-  async cancelarReserva(id: string, empresaId: string) {
+  async cancelarReserva(id: string) {
     await EmpresaApi.cancelarReservaEmpresa(id);
-    await this.cargarReservas(empresaId);
+    await this.cargarReservas();
   }
 
   async cargarServicios(empresaId: string) {
@@ -127,6 +127,23 @@ export class EmpresaStore {
       }
     } catch (err: any) {
       this.errorDisponibilidad.set(err?.message ?? 'Error al actualizar disponibilidad');
+    }
+  }
+
+  async crearProfesional(nombre: string, sucursalId: string) {
+    this.loading.set(true);
+    this.error.set(null);
+
+    try {
+      const id = await EmpresaApi.crearProfesional(nombre, sucursalId);
+
+      return id;
+    } catch (err: any) {
+      console.error(err);
+      this.error.set('No se pudo crear el profesional');
+      throw err;
+    } finally {
+      this.loading.set(false);
     }
   }
 }

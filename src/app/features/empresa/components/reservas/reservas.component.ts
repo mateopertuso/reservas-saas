@@ -12,14 +12,12 @@ import { EmpresaStore } from '../../state/empresa.store';
 export class ReservasComponent {
   store = inject(EmpresaStore);
 
-  empresaId = '3b80b251-1581-438e-a4fb-9dec140b9039';
-
   ngOnInit(): void {
-    this.store.cargarReservas(this.empresaId);
+    this.store.cargarReservas();
   }
 
   cancelar(id: string) {
-    this.store.cancelarReserva(id, this.empresaId);
+    this.store.cancelarReserva(id);
     console.log('ID RESERVA', id);
   }
 }

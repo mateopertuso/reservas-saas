@@ -26,6 +26,18 @@
         <option [value]="p.id">{{ p.nombre }}</option>
       }
     </select>
+    <input [(ngModel)]="nombreNuevo" placeholder="Nombre profesional" />
+
+    <select [(ngModel)]="sucursalSeleccionada">
+      <option value="">Sucursal</option>
+      @for (s of sucursales; track s.id) {
+        <option [value]="s.id">
+          {{ s.nombre }}
+        </option>
+      }
+    </select>
+
+    <button (click)="crearProfesional()">Crear</button>
 
     <select [(ngModel)]="servicioId" class="w-full border p-2 rounded">
       <option value="">Servicio</option>
