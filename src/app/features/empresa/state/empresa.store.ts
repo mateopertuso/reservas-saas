@@ -146,4 +146,18 @@ export class EmpresaStore {
       this.loading.set(false);
     }
   }
+
+  async crearUsuarioProfesional(payload: any) {
+    this.loading.set(true);
+
+    try {
+      await EmpresaApi.crearUsuarioProfesional(payload);
+      console.log('Usuario creado correctamente');
+    } catch (e) {
+      console.error(e);
+      this.error.set('Error creando usuario');
+    } finally {
+      this.loading.set(false);
+    }
+  }
 }

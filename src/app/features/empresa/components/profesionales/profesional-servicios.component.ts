@@ -22,9 +22,16 @@ export class ProfesionalServiciosComponent {
   sucursalSeleccionada = '';
   sucursales: any[] = [];
 
+  email = '';
+  password = '';
+
   async ngOnInit() {
-    console.log('sucursales: ', this.sucursales);
-    this.sucursales = await EmpresaApi.getSucursales();
+    try {
+      this.sucursales = await EmpresaApi.getSucursales();
+      console.log('sucursales cargadas:', this.sucursales);
+    } catch (error) {
+      console.error('ERROR SUCURSALES:', error);
+    }
   }
 
   crear() {
@@ -52,5 +59,19 @@ export class ProfesionalServiciosComponent {
     } catch (e) {
       console.error(e);
     }
+  }
+
+  async crearUsuario() {
+    if (!this.email || !this.password || !this.nombreNuevo || !this.sucursalSeleccionada) {
+      console.warn('Faltan datos');
+      return;
+    }
+
+    await this.store.crearUsuarioProfesional({
+      email: this.email,
+      password: this.password,
+      nombre: this.nombreNuevo,
+      sucursal_id: this.sucursalSeleccionada,
+    });
   }
 }

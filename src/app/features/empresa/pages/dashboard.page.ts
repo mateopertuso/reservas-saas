@@ -6,6 +6,7 @@ import { ProfesionalServiciosComponent } from '../components/profesionales/profe
 import { DisponibilidadComponent } from '../components/disponibilidad/disponibilidad.component';
 import { ReservasComponent } from '../components/reservas/reservas.component';
 import { SessionService } from '../../auth/services/session.service';
+import { supabase } from '../../../core/supabase/supabase.client';
 
 @Component({
   standalone: true,
@@ -26,8 +27,11 @@ export class DashboardPage implements OnInit {
 
   empresaId = '3b80b251-1581-438e-a4fb-9dec140b9039';
 
-  ngOnInit(): void {
+  async ngOnInit(): Promise<void> {
     console.log(this.session.context());
+
+    const { data } = await supabase.rpc('get_empresa_id_actual');
+    console.log('EMPRESA ID:', data);
     this.store.cargarReservas();
     this.store.cargarServicios(this.empresaId);
     this.store.cargarProfesionales(this.empresaId);

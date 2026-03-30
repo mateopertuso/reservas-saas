@@ -159,4 +159,35 @@ export class EmpresaApi {
 
     return data;
   }
+
+  static async crearUsuarioProfesional(data: any) {
+    const {
+      data: { session },
+      error: sessionError,
+    } = await supabase.auth.getSession();
+
+    if (sessionError) throw sessionError;
+    if (!session?.access_token) throw new Error('No hay sesion activa para invocar la funcion');
+
+    const { data: result, error } = await supabase.functions.invoke('create-user-professional', {
+      body: data,
+      headers: {
+        Authorization: `Bearer ${session.access_token}`,
+      },
+    });
+
+    if (error) {
+      console.error('🔥 EDGE ERROR:', error);
+      console.error('🔥 MESSAGE:', error.message);
+      console.error('🔥 FULL:', JSON.stringify(error, null, 2));
+
+      if ((error as any).context) {
+        console.error('🔥 CONTEXT:', (error as any).context);
+      }
+
+      throw error;
+    }
+
+    return result;
+  }
 }

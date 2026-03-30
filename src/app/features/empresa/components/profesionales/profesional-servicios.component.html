@@ -55,4 +55,18 @@
 
     <button (click)="crear()" class="bg-black text-white px-4 py-2 rounded">Asignar</button>
   </div>
+
+  <input [(ngModel)]="email" placeholder="Email" />
+  <input [(ngModel)]="password" placeholder="Password" />
+  <input [(ngModel)]="nombreNuevo" placeholder="Nombre" />
+
+  <select [(ngModel)]="sucursalSeleccionada">
+    @for (s of sucursales; track s.id) {
+      <option [value]="s.id">
+        {{ s.nombre }}
+      </option>
+    }
+  </select>
+
+  <button (click)="crearUsuario()">Crear usuario</button>
 </div>
