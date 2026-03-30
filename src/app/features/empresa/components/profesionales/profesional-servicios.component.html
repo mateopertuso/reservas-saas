@@ -1,72 +1,115 @@
-<div class="mt-10">
-  <h2 class="text-xl font-semibold mb-4">Asignar servicios a profesionales</h2>
+@if (store.contexto()?.rol === 'owner' || store.contexto()?.rol === 'professional') {
+  <div class="mt-10">
+    <h2 class="text-xl font-semibold mb-4">
+      {{
+        store.contexto()?.rol === 'professional'
+          ? 'Mis servicios'
+          : 'Asignar servicios a profesionales'
+      }}
+    </h2>
 
-  <!-- Lista -->
-  @for (ps of store.profesionalServicios(); track ps.profesional_id + ps.servicio_id) {
-    <div class="flex justify-between items-center border p-3 rounded mb-2">
-      <div>
-        <p class="font-medium">
-          {{ ps.profesional_nombre }}
-        </p>
+    <!-- Lista -->
+    @for (ps of store.profesionalServicios(); track ps.profesional_id + ps.servicio_id) {
+      <div class="flex justify-between items-center border p-3 rounded mb-2">
+        <div>
+          <p class="font-medium">
+            {{ ps.profesional_nombre }}
+          </p>
 
-        <p class="text-sm text-slate-500">{{ ps.servicio_nombre }} ({{ ps.duracion_min }} min)</p>
+          <p class="text-sm text-slate-500">
+            {{ ps.servicio_nombre }} ({{ ps.duracion_min }} min) - ${{ ps.precio }}
+          </p>
+        </div>
+
+        <button (click)="eliminar(ps.profesional_id, ps.servicio_id)" class="text-sm text-red-500">
+          Eliminar
+        </button>
       </div>
+    }
 
-      <button (click)="eliminar(ps.profesional_id, ps.servicio_id)" class="text-sm text-red-500">
-        Eliminar
+    <!-- Crear asignación -->
+    <div class="mt-6 space-y-2">
+      <!-- selector profesional SOLO owner -->
+      @if (store.contexto()?.rol === 'owner') {
+        <select [(ngModel)]="profesionalId" class="w-full border p-2 rounded">
+          <option value="">Profesional</option>
+          @for (p of store.profesionales(); track p.id) {
+            <option [value]="p.id">{{ p.nombre }}</option>
+          }
+        </select>
+      }
+
+      <!-- servicio -->
+      <select [(ngModel)]="servicioId" class="w-full border p-2 rounded">
+        <option value="">Servicio</option>
+        @for (s of store.servicios(); track s.id) {
+          <option [value]="s.id">{{ s.nombre }}</option>
+        }
+      </select>
+
+      <!-- duración -->
+      <input
+        type="number"
+        [(ngModel)]="duracion"
+        placeholder="Duración (min)"
+        class="w-full border p-2 rounded"
+      />
+
+      <input
+        type="number"
+        [(ngModel)]="precio"
+        placeholder="Precio"
+        class="w-full border p-2 rounded"
+      />
+
+      <button (click)="crear()" class="bg-black text-white px-4 py-2 rounded w-full">
+        {{ store.contexto()?.rol === 'professional' ? 'Agregar servicio' : 'Asignar servicio' }}
       </button>
     </div>
-  }
 
-  <!-- Crear -->
-  <div class="mt-6 space-y-2">
-    <select [(ngModel)]="profesionalId" class="w-full border p-2 rounded">
-      <option value="">Profesional</option>
-      @for (p of store.profesionales(); track p.id) {
-        <option [value]="p.id">{{ p.nombre }}</option>
-      }
-    </select>
-    <input [(ngModel)]="nombreNuevo" placeholder="Nombre profesional" />
+    <!-- 🔥 BLOQUE SOLO OWNER -->
+    @if (store.contexto()?.rol === 'owner') {
+      <!-- Crear profesional -->
+      <div class="mt-8 space-y-2 border-t pt-4">
+        <h3 class="font-medium">Crear profesional</h3>
 
-    <select [(ngModel)]="sucursalSeleccionada">
-      <option value="">Sucursal</option>
-      @for (s of sucursales; track s.id) {
-        <option [value]="s.id">
-          {{ s.nombre }}
-        </option>
-      }
-    </select>
+        <input
+          [(ngModel)]="nombreNuevo"
+          placeholder="Nombre profesional"
+          class="w-full border p-2 rounded"
+        />
 
-    <button (click)="crearProfesional()">Crear</button>
+        <select [(ngModel)]="sucursalSeleccionada" class="w-full border p-2 rounded">
+          <option value="">Sucursal</option>
+          @for (s of sucursales; track s.id) {
+            <option [value]="s.id">{{ s.nombre }}</option>
+          }
+        </select>
 
-    <select [(ngModel)]="servicioId" class="w-full border p-2 rounded">
-      <option value="">Servicio</option>
-      @for (s of store.servicios(); track s.id) {
-        <option [value]="s.id">{{ s.nombre }}</option>
-      }
-    </select>
+        <button (click)="crearProfesional()" class="border px-3 py-2 rounded">
+          Crear profesional
+        </button>
+      </div>
 
-    <input
-      type="number"
-      [(ngModel)]="duracion"
-      placeholder="Duración (min)"
-      class="w-full border p-2 rounded"
-    />
+      <!-- Crear usuario -->
+      <div class="mt-6 space-y-2">
+        <h3 class="font-medium">Crear usuario</h3>
 
-    <button (click)="crear()" class="bg-black text-white px-4 py-2 rounded">Asignar</button>
-  </div>
+        <input [(ngModel)]="email" placeholder="Email" class="w-full border p-2 rounded" />
+        <input [(ngModel)]="password" placeholder="Password" class="w-full border p-2 rounded" />
 
-  <input [(ngModel)]="email" placeholder="Email" />
-  <input [(ngModel)]="password" placeholder="Password" />
-  <input [(ngModel)]="nombreNuevo" placeholder="Nombre" />
+        <input [(ngModel)]="nombreNuevo" placeholder="Nombre" class="w-full border p-2 rounded" />
 
-  <select [(ngModel)]="sucursalSeleccionada">
-    @for (s of sucursales; track s.id) {
-      <option [value]="s.id">
-        {{ s.nombre }}
-      </option>
+        <select [(ngModel)]="sucursalSeleccionada" class="w-full border p-2 rounded">
+          @for (s of sucursales; track s.id) {
+            <option [value]="s.id">{{ s.nombre }}</option>
+          }
+        </select>
+
+        <button (click)="crearUsuario()" class="bg-black text-white px-4 py-2 rounded">
+          Crear usuario
+        </button>
+      </div>
     }
-  </select>
-
-  <button (click)="crearUsuario()">Crear usuario</button>
-</div>
+  </div>
+}

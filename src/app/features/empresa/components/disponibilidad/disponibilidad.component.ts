@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { EmpresaStore } from '../../state/empresa.store';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
@@ -9,7 +9,7 @@ import { CommonModule } from '@angular/common';
   imports: [CommonModule, FormsModule],
   templateUrl: './disponibilidad.component.html',
 })
-export class DisponibilidadComponent {
+export class DisponibilidadComponent implements OnInit {
   store = inject(EmpresaStore);
 
   profesionalId = '';
@@ -22,6 +22,17 @@ export class DisponibilidadComponent {
   editFecha = '';
   editInicio = '';
   editFin = '';
+
+  ngOnInit() {
+    const contexto = this.store.contexto();
+
+    if (contexto?.rol === 'professional') {
+      this.profesionalId = contexto.profesional_id;
+
+      // 🔥 cargar automáticamente su disponibilidad
+      this.store.cargarDisponibilidad(this.profesionalId);
+    }
+  }
 
   editar(d: any) {
     this.editandoId = d.id;
@@ -47,16 +58,24 @@ export class DisponibilidadComponent {
 
   cargar() {
     this.store.errorDisponibilidad.set(null);
+
     if (this.profesionalId) {
       this.store.cargarDisponibilidad(this.profesionalId);
     }
   }
 
   crear() {
-    if (!this.profesionalId || !this.fecha) return;
+    if (!this.fecha) return;
+
+    const contexto = this.store.contexto();
+
+    const profesionalId =
+      contexto?.rol === 'professional' ? contexto.profesional_id : this.profesionalId;
+
+    if (!profesionalId) return;
 
     this.store.crearDisponibilidad({
-      profesionalId: this.profesionalId,
+      profesionalId,
       fecha: this.fecha,
       inicio: this.inicio,
       fin: this.fin,

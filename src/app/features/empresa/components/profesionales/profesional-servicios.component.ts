@@ -24,8 +24,13 @@ export class ProfesionalServiciosComponent {
 
   email = '';
   password = '';
+  precio = 0;
 
   async ngOnInit() {
+    const contexto = this.store.contexto();
+    if (contexto?.rol === 'professional') {
+      this.profesionalId = contexto.profesional_id;
+    }
     try {
       this.sucursales = await EmpresaApi.getSucursales();
       console.log('sucursales cargadas:', this.sucursales);
@@ -35,9 +40,22 @@ export class ProfesionalServiciosComponent {
   }
 
   crear() {
-    if (!this.profesionalId || !this.servicioId) return;
+    const contexto = this.store.contexto();
 
-    this.store.asignarServicio(this.profesionalId, this.servicioId, this.duracion, this.empresaId);
+    const profesionalId =
+      contexto?.rol === 'professional' ? contexto.profesional_id : this.profesionalId;
+
+    console.log('PROF FINAL:', profesionalId);
+
+    if (!profesionalId || !this.servicioId) return;
+
+    this.store.asignarServicio(
+      profesionalId,
+      this.servicioId,
+      this.duracion,
+      this.precio,
+      this.empresaId,
+    );
   }
 
   eliminar(profId: string, servId: string) {

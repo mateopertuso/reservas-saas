@@ -1,29 +1,38 @@
-<div class="mt-10">
-  <h2 class="text-xl font-semibold mb-4">Servicios</h2>
+@if (store.contexto()?.rol === 'owner') {
+  <div class="mt-10">
+    <h2 class="text-xl font-semibold mb-4">Servicios</h2>
 
-  <!-- Lista -->
-  @if (store.servicios().length) {
-    <div class="space-y-2">
-      @for (s of store.servicios(); track s.id) {
-        <div class="flex justify-between items-center bg-white border p-3 rounded-lg">
-          <div>
-            <p class="font-medium">{{ s.nombre }}</p>
+    <!-- Lista -->
+    @if (store.servicios().length) {
+      <div class="space-y-2">
+        @for (s of store.servicios(); track s.id) {
+          <div class="flex justify-between items-center bg-white border p-3 rounded-lg">
+            <div>
+              <p class="font-medium">{{ s.nombre }}</p>
+            </div>
+
+            <button (click)="eliminar(s.id)" class="text-sm text-red-500">Eliminar</button>
           </div>
+        }
+      </div>
+    }
 
-          <button (click)="eliminar(s.id)" class="text-sm text-red-500">Eliminar</button>
-        </div>
-      }
+    <!-- Crear -->
+    <div class="mt-6 space-y-2">
+      <input
+        [(ngModel)]="nombre"
+        placeholder="Nombre del servicio"
+        class="w-full border rounded px-3 py-2"
+      />
+
+      <button (click)="crear()" class="bg-black text-white px-4 py-2 rounded">
+        Crear servicio
+      </button>
     </div>
-  }
-
-  <!-- Crear -->
-  <div class="mt-6 space-y-2">
-    <input
-      [(ngModel)]="nombre"
-      placeholder="Nombre del servicio"
-      class="w-full border rounded px-3 py-2"
-    />
-
-    <button (click)="crear()" class="bg-black text-white px-4 py-2 rounded">Crear servicio</button>
   </div>
-</div>
+}
+@if (store.contexto()?.rol === 'professional') {
+  <div class="mt-10 p-4 border rounded bg-slate-50">
+    <p class="text-sm text-slate-600">Los servicios son gestionados por la empresa.</p>
+  </div>
+}

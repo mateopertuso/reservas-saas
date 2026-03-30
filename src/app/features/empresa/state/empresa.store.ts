@@ -14,6 +14,17 @@ export class EmpresaStore {
   disponibilidad = signal<any[]>([]);
   profesionalSeleccionadoDisponibilidad = signal<string | null>(null);
   errorDisponibilidad = signal<string | null>(null);
+  contexto = signal<any | null>(null);
+  agenda = signal<any[]>([]);
+
+  async cargarContexto() {
+    try {
+      const data = await EmpresaApi.getMiContexto();
+      this.contexto.set(data);
+    } catch (e) {
+      console.error('Error cargando contexto', e);
+    }
+  }
 
   async cargarReservas() {
     this.loading.set(true);
@@ -61,11 +72,18 @@ export class EmpresaStore {
     this.profesionalServicios.set(data);
   }
 
-  async asignarServicio(profId: string, servId: string, duracion: number, empresaId: string) {
+  async asignarServicio(
+    profId: string,
+    servId: string,
+    duracion: number,
+    precio: number,
+    empresaId: string,
+  ) {
     await EmpresaApi.upsertProfesionalServicio({
       profesionalId: profId,
       servicioId: servId,
       duracion,
+      precio,
     });
 
     await this.cargarProfesionalServicios(empresaId);
@@ -156,6 +174,17 @@ export class EmpresaStore {
     } catch (e) {
       console.error(e);
       this.error.set('Error creando usuario');
+    } finally {
+      this.loading.set(false);
+    }
+  }
+
+  async cargarAgenda(fecha: string) {
+    this.loading.set(true);
+
+    try {
+      const data = await EmpresaApi.getAgendaDia(fecha);
+      this.agenda.set(data ?? []);
     } finally {
       this.loading.set(false);
     }

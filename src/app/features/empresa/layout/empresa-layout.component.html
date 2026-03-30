@@ -1,0 +1,48 @@
+<div class="flex min-h-screen bg-slate-100">
+  <!-- SIDEBAR -->
+  <aside class="w-64 bg-white border-r px-4 py-6 shadow-sm">
+    <h1 class="text-xl font-bold mb-8">TurnoSimple</h1>
+
+    <nav class="flex flex-col gap-1 text-sm">
+      <a routerLink="/empresa/agenda" class="px-3 py-2 rounded-lg hover:bg-slate-100 transition">
+        📅 Agenda
+      </a>
+
+      <a routerLink="/empresa/reservas" class="px-3 py-2 rounded-lg hover:bg-slate-100 transition">
+        📋 Reservas
+      </a>
+
+      <a
+        routerLink="/empresa/disponibilidad"
+        class="px-3 py-2 rounded-lg hover:bg-slate-100 transition"
+      >
+        ⏱ Disponibilidad
+      </a>
+
+      @if (store.contexto()?.rol === 'owner') {
+        <div class="mt-4 text-xs text-slate-400 uppercase px-2">Configuración</div>
+
+        <a
+          routerLink="/empresa/servicios"
+          class="px-3 py-2 rounded-lg hover:bg-slate-100 transition"
+        >
+          🧾 Servicios
+        </a>
+
+        <a
+          routerLink="/empresa/profesional-servicios"
+          class="px-3 py-2 rounded-lg hover:bg-slate-100 transition"
+        >
+          👥 Profesionales
+        </a>
+      }
+    </nav>
+  </aside>
+
+  <!-- CONTENT -->
+  <main class="flex-1 p-8">
+    <div class="max-w-5xl mx-auto">
+      <router-outlet />
+    </div>
+  </main>
+</div>

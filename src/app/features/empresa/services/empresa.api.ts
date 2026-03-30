@@ -68,6 +68,7 @@ export class EmpresaApi {
       p_profesional: payload.profesionalId,
       p_servicio: payload.servicioId,
       p_duracion: payload.duracion,
+      p_precio: payload.precio,
     });
 
     if (error) throw error;
@@ -189,5 +190,23 @@ export class EmpresaApi {
     }
 
     return result;
+  }
+
+  static async getMiContexto() {
+    const { data, error } = await supabase.rpc('get_mi_contexto');
+
+    if (error) throw error;
+
+    return data;
+  }
+
+  static async getAgendaDia(fecha: string) {
+    const { data, error } = await supabase.rpc('get_agenda_dia', {
+      p_fecha: fecha,
+    });
+
+    if (error) throw error;
+
+    return data;
   }
 }

@@ -1,0 +1,45 @@
+<div class="mt-10">
+  <h2 class="text-xl font-semibold mb-4">
+    {{ store.contexto()?.rol === 'professional' ? 'Mi agenda' : 'Agenda de la empresa' }}
+  </h2>
+
+  <!-- selector fecha -->
+  <div class="mb-4">
+    <input type="date" [(ngModel)]="fecha" (change)="cargar()" class="border p-2 rounded" />
+  </div>
+
+  <!-- loading -->
+  @if (store.loading()) {
+    <p class="text-sm text-gray-500">Cargando agenda...</p>
+  }
+
+  <!-- sin datos -->
+  @if (!store.loading() && !store.agenda().length) {
+    <p class="text-sm text-gray-500">No hay turnos para este día</p>
+  }
+
+  <!-- lista -->
+  @for (t of store.agenda(); track t.id) {
+    <div class="border p-3 rounded mb-2 bg-white">
+      <div class="flex justify-between items-center">
+        <p class="font-medium">{{ t.fecha_hora | date: 'HH:mm' }} - {{ t.cliente_nombre }}</p>
+
+        <span
+          class="text-xs px-2 py-1 rounded"
+          [ngClass]="{
+            'bg-green-100 text-green-700': t.estado === 'confirmada',
+            'bg-red-100 text-red-700': t.estado === 'cancelada',
+            'bg-yellow-100 text-yellow-700': t.estado === 'pendiente',
+          }"
+        >
+          {{ t.estado }}
+        </span>
+      </div>
+
+      <p class="text-sm text-gray-500 mt-1">
+        {{ t.servicio_nombre }}
+        ({{ t.duracion_min }} min) - ${{ t.precio }}
+      </p>
+    </div>
+  }
+</div>
