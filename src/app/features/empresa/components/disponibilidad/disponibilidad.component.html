@@ -7,73 +7,127 @@
     }}
   </h2>
 
-  <!-- seleccionar profesional (solo owner) -->
+  <!-- ================= OWNER VIEW ================= -->
   @if (store.contexto()?.rol === 'owner') {
-    <select [(ngModel)]="profesionalId" (change)="cargar()" class="w-full border p-2 rounded mb-4">
-      <option value="">Seleccionar profesional</option>
-      @for (p of store.profesionales(); track p.id) {
-        <option [value]="p.id">{{ p.nombre }}</option>
-      }
-    </select>
-  }
 
-  <!-- lista -->
-  @for (d of store.disponibilidad(); track d.id) {
-    <div class="border p-3 rounded mb-2">
-      @if (editandoId === d.id) {
-        <div class="flex gap-2">
-          <input type="date" [(ngModel)]="editFecha" class="border p-1 rounded" />
-          <input type="time" [(ngModel)]="editInicio" class="border p-1 rounded" />
-          <input type="time" [(ngModel)]="editFin" class="border p-1 rounded" />
-        </div>
+    <!-- LISTADO GLOBAL -->
+    @for (p of store.profesionales(); track p.id) {
+      <div class="mb-6">
+        <h3 class="font-semibold text-lg mb-2">
+          {{ p.nombre }}
+        </h3>
 
-        <div class="mt-2 flex gap-2">
-          <button (click)="guardar(d.id)" class="bg-black text-white px-2 py-1 rounded">
-            Guardar
-          </button>
-          <button (click)="cancelar()" class="px-2 py-1 border rounded">Cancelar</button>
-        </div>
-      } @else {
-        <div class="flex justify-between items-center">
-          <div (click)="editar(d)" class="cursor-pointer">
+        @for (d of disponibilidadPorProfesional()[p.id] || []; track d.id) {
+          <div class="bg-white border rounded p-3 mb-2">
             <p>{{ d.fecha | date: 'dd/MM/yyyy' }}</p>
-            <p>{{ d.hora_inicio }} - {{ d.hora_fin }}</p>
+            <p class="text-sm text-gray-500">
+              {{ d.hora_inicio }} - {{ d.hora_fin }}
+            </p>
           </div>
+        }
 
-          <button (click)="eliminar(d.id)" class="text-red-500 text-sm">Eliminar</button>
-        </div>
-      }
+        @if (!(disponibilidadPorProfesional()[p.id]?.length)) {
+          <p class="text-sm text-gray-400">Sin disponibilidad</p>
+        }
+      </div>
+    }
+
+    <!-- CREAR PARA CUALQUIER PROFESIONAL -->
+    <div class="mt-6 space-y-2">
+      <p class="text-sm text-slate-500">Asignar disponibilidad a:</p>
+
+      <select
+        [(ngModel)]="profesionalId"
+        class="w-full border p-2 rounded"
+      >
+        <option value="">Seleccionar profesional</option>
+        @for (p of store.profesionales(); track p.id) {
+          <option [value]="p.id">{{ p.nombre }}</option>
+        }
+      </select>
+
+      <input type="date" [(ngModel)]="fecha" class="w-full border p-2 rounded" />
+      <input type="time" [(ngModel)]="inicio" class="w-full border p-2 rounded" />
+      <input type="time" [(ngModel)]="fin" class="w-full border p-2 rounded" />
+
+      <button
+        (click)="crear()"
+        [disabled]="store.loading()"
+        class="bg-black text-white px-4 py-2 rounded w-full"
+      >
+        @if (store.loading()) {
+          Guardando...
+        } @else {
+          Agregar disponibilidad
+        }
+      </button>
     </div>
   }
 
-  <!-- crear -->
-  <div class="mt-6 space-y-2">
-    <input type="date" [(ngModel)]="fecha" class="w-full border p-2 rounded" />
-    <input type="time" [(ngModel)]="inicio" class="w-full border p-2 rounded" />
-    <input type="time" [(ngModel)]="fin" class="w-full border p-2 rounded" />
+  <!-- ================= PROFESSIONAL VIEW ================= -->
+  @if (store.contexto()?.rol === 'professional') {
 
-    <button
-      (click)="crear()"
-      [disabled]="store.loading()"
-      class="bg-black text-white px-4 py-2 rounded disabled:opacity-50 w-full"
-    >
-      @if (store.loading()) {
-        Guardando...
-      } @else {
-        Agregar disponibilidad
-      }
-    </button>
-  </div>
+    <!-- LISTA PROPIA -->
+    @for (d of store.disponibilidad(); track d.id) {
+      <div class="border p-3 rounded mb-2">
+        @if (editandoId === d.id) {
+          <div class="flex gap-2">
+            <input type="date" [(ngModel)]="editFecha" class="border p-1 rounded" />
+            <input type="time" [(ngModel)]="editInicio" class="border p-1 rounded" />
+            <input type="time" [(ngModel)]="editFin" class="border p-1 rounded" />
+          </div>
 
-  <!-- error -->
+          <div class="mt-2 flex gap-2">
+            <button (click)="guardar(d.id)" class="bg-black text-white px-2 py-1 rounded">
+              Guardar
+            </button>
+            <button (click)="cancelar()" class="px-2 py-1 border rounded">
+              Cancelar
+            </button>
+          </div>
+        } @else {
+          <div class="flex justify-between items-center">
+            <div (click)="editar(d)" class="cursor-pointer">
+              <p>{{ d.fecha | date: 'dd/MM/yyyy' }}</p>
+              <p>{{ d.hora_inicio }} - {{ d.hora_fin }}</p>
+            </div>
+
+            <button (click)="eliminar(d.id)" class="text-red-500 text-sm">
+              Eliminar
+            </button>
+          </div>
+        }
+      </div>
+    }
+
+    <!-- CREAR PROPIO -->
+    <div class="mt-6 space-y-2">
+      <input type="date" [(ngModel)]="fecha" class="w-full border p-2 rounded" />
+      <input type="time" [(ngModel)]="inicio" class="w-full border p-2 rounded" />
+      <input type="time" [(ngModel)]="fin" class="w-full border p-2 rounded" />
+
+      <button
+        (click)="crear()"
+        [disabled]="store.loading()"
+        class="bg-black text-white px-4 py-2 rounded w-full"
+      >
+        @if (store.loading()) {
+          Guardando...
+        } @else {
+          Agregar disponibilidad
+        }
+      </button>
+    </div>
+
+    <p class="mt-4 text-sm text-gray-500">
+      Estás gestionando tu propia disponibilidad
+    </p>
+  }
+
+  <!-- ERROR GLOBAL -->
   @if (store.errorDisponibilidad()) {
     <div class="mt-4 rounded-lg border border-red-200 bg-red-50 p-3 text-sm text-red-700">
       {{ store.errorDisponibilidad() }}
     </div>
-  }
-
-  <!-- hint solo para professional -->
-  @if (store.contexto()?.rol === 'professional') {
-    <p class="mt-4 text-sm text-gray-500">Estás gestionando tu propia disponibilidad</p>
   }
 </div>

@@ -2,6 +2,7 @@ import { Component, OnInit, inject } from '@angular/core';
 import { RouterModule, RouterOutlet } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { EmpresaStore } from '../state/empresa.store';
+import { createClient } from '@supabase/supabase-js';
 
 @Component({
   standalone: true,
@@ -13,6 +14,7 @@ export class EmpresaLayoutComponent implements OnInit {
   store = inject(EmpresaStore);
 
   empresaId = '3b80b251-1581-438e-a4fb-9dec140b9039';
+
 
   ngOnInit() {
     this.store.cargarContexto();

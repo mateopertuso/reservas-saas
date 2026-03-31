@@ -27,7 +27,13 @@ export const routes: Routes = [
   },
 
   {
+    path: 'test-auth',
+    loadComponent: () =>
+      import('./features/auth/pages/test.auth.component').then((m) => m.TestAuthComponent),
+  },
+  {
     path: '**',
     redirectTo: '',
   },
+
 ];

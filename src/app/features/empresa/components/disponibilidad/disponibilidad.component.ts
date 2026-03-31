@@ -1,7 +1,8 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, inject, OnInit, signal } from '@angular/core';
 import { EmpresaStore } from '../../state/empresa.store';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
+import { EmpresaApi } from '../../services/empresa.api';
 
 @Component({
   standalone: true,
@@ -23,16 +24,45 @@ export class DisponibilidadComponent implements OnInit {
   editInicio = '';
   editFin = '';
 
-  ngOnInit() {
-    const contexto = this.store.contexto();
+  disponibilidadPorProfesional = signal<Record<string, any[]>>({});
 
-    if (contexto?.rol === 'professional') {
-      this.profesionalId = contexto.profesional_id;
+  async ngOnInit() {
+  const contexto = this.store.contexto();
 
-      // 🔥 cargar automáticamente su disponibilidad
-      this.store.cargarDisponibilidad(this.profesionalId);
+  if (contexto?.rol === 'professional') {
+    this.profesionalId = contexto.profesional_id;
+    this.store.cargarDisponibilidad(this.profesionalId);
+  }
+
+  if (contexto?.rol === 'owner') {
+    console.log('PROFESIONALES:', this.store.profesionales());
+
+    await this.cargarTodos(); // 🔥 ESTO FALTABA
+  }
+}
+
+
+  async cargarTodos() {
+  const profesionales = this.store.profesionales();
+
+  const result: Record<string, any[]> = {};
+
+  for (const p of profesionales) {
+    try {
+      const data = await EmpresaApi.getDisponibilidadProfesional(p.id);
+      console.log('DISPONIBILIDAD', p.nombre, data);
+
+      result[p.id] = data ?? [];
+    } catch (e) {
+      console.error('Error en', p.nombre, e);
+      result[p.id] = [];
     }
   }
+
+  this.disponibilidadPorProfesional.set(result);
+}
+  
+
 
   editar(d: any) {
     this.editandoId = d.id;
@@ -85,4 +115,6 @@ export class DisponibilidadComponent implements OnInit {
   eliminar(id: string) {
     this.store.eliminarDisponibilidad(id);
   }
+
+  
 }

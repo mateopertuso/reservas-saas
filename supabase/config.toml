@@ -405,3 +405,14 @@ entrypoint = "./functions/create-user-professional/index.ts"
 # Specifies static files to be bundled with the function. Supports glob patterns.
 # For example, if you want to serve static HTML pages in your function:
 # static_files = [ "./functions/create-user-professional/*.html" ]
+
+[functions.create-owner-account]
+enabled = true
+verify_jwt = true
+import_map = "./functions/create-owner-account/deno.json"
+# Uncomment to specify a custom file path to the entrypoint.
+# Supported file extensions are: .ts, .js, .mjs, .jsx, .tsx
+entrypoint = "./functions/create-owner-account/index.ts"
+# Specifies static files to be bundled with the function. Supports glob patterns.
+# For example, if you want to serve static HTML pages in your function:
+# static_files = [ "./functions/create-owner-account/*.html" ]
