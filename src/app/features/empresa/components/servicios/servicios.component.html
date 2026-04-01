@@ -24,6 +24,15 @@
         placeholder="Nombre del servicio"
         class="w-full border rounded px-3 py-2"
       />
+      <select [(ngModel)]="sucursalId" class="w-full border rounded px-3 py-2">
+        <option value="" disabled selected>Seleccionar sucursal</option>
+
+        @for (s of store.sucursales(); track s.id) {
+          <option [value]="s.id">
+            {{ s.nombre }}
+          </option>
+        }
+      </select>
 
       <button (click)="crear()" class="bg-black text-white px-4 py-2 rounded">
         Crear servicio

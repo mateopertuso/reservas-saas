@@ -2,25 +2,82 @@ import { Component, OnInit, inject } from '@angular/core';
 import { RouterModule, RouterOutlet } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { EmpresaStore } from '../state/empresa.store';
-import { createClient } from '@supabase/supabase-js';
+import { SessionService } from '../../auth/services/session.service';
+import { AuthService } from '../../auth/services/auth.service';
+import {
+  LucideAngularModule,
+  Calendar,
+  ClipboardList,
+  Clock,
+  Settings,
+  FileText,
+  Users,
+  Building2,
+  LogOut,
+} from 'lucide-angular';
 
 @Component({
   standalone: true,
   selector: 'app-empresa-layout',
-  imports: [CommonModule, RouterOutlet, RouterModule],
+  imports: [CommonModule, RouterOutlet, RouterModule, LucideAngularModule],
   templateUrl: './empresa-layout.component.html',
 })
 export class EmpresaLayoutComponent implements OnInit {
   store = inject(EmpresaStore);
 
-  empresaId = '3b80b251-1581-438e-a4fb-9dec140b9039';
+  Calendar = Calendar;
+  ClipboardList = ClipboardList;
+  Clock = Clock;
+  Settings = Settings;
+  FileText = FileText;
+  Users = Users;
+  Building2 = Building2;
+  LogOut = LogOut;
 
+  constructor(
+    private session: SessionService,
+    private auth: AuthService,
+  ) {}
 
-  ngOnInit() {
+  async ngOnInit() {
+    // 🔥 1. cargar contexto
+    await this.session.loadContext();
+
+    const ctx = this.session.context();
+
+    if (!ctx) {
+      console.error('No hay contexto de usuario');
+      return;
+    }
+
+    const empresaId = ctx.empresa_id;
+
+    // 🎨 2. aplicar color dinámico
+    const color = ctx.color_tema || '#3B82F6';
+    document.documentElement.style.setProperty('--color-primary', color);
+
+    // 🔥 3. cargas base (paralelas, no dependen entre sí)
     this.store.cargarContexto();
+    this.store.cargarSucursales();
     this.store.cargarReservas();
-    this.store.cargarServicios(this.empresaId);
-    this.store.cargarProfesionales(this.empresaId);
-    this.store.cargarProfesionalServicios(this.empresaId);
+    this.store.cargarServicios(empresaId);
+    this.store.cargarProfesionalServicios(empresaId);
+    this.store.cargarAgenda(new Date().toISOString().slice(0, 10));
+
+    // 🔥 4. flujo dependiente (SECUENCIAL)
+    await this.store.cargarProfesionales(empresaId);
+
+    const profesionales = this.store.profesionales();
+
+    if (profesionales.length) {
+      await this.store.cargarDisponibilidadTodos(profesionales);
+    }
+  }
+
+  async logout() {
+    await this.auth.logout();
+    this.session.clear();
+
+    window.location.href = '/';
   }
 }

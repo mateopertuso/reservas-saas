@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import { AuthService } from '../services/auth.service';
 import { Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
-import { SessionService } from '../services/session.service';
+import { supabase } from '../../../core/supabase/supabase.client';
 
 @Component({
   selector: 'app-login',
@@ -14,36 +14,51 @@ export class LoginPage {
   email = '';
   password = '';
 
+  loading = false;
+
   constructor(
     private auth: AuthService,
     private router: Router,
-    private session: SessionService,
   ) {}
 
   ngOnInit() {
     if (this.auth.user()) {
-      this.router.navigateByUrl('/empresa');
+      this.router.navigateByUrl('/auth/callback');
     }
   }
 
   async login() {
+    this.loading = true;
+
     try {
-      await this.auth.login(this.email, this.password);
+      // 🔥 intento login
+      const { error } = await supabase.auth.signInWithPassword({
+        email: this.email,
+        password: this.password,
+      });
 
-      // 👇 esperar a que cargue el contexto
-      await this.session.loadContext();
+      if (error) {
+        // 🔥 si falla → intento registro automático
+        const { error: signUpError } = await supabase.auth.signUp({
+          email: this.email,
+          password: this.password,
+        });
 
-      const ctx = this.session.context();
-
-      if (ctx?.rol === 'owner') {
-        this.router.navigateByUrl('/empresa');
-      } else if (ctx?.rol === 'professional') {
-        this.router.navigateByUrl('/empresa'); // después podemos separar
-      } else {
-        this.router.navigateByUrl('/');
+        if (signUpError) {
+          throw signUpError;
+        }
       }
-    } catch (err) {
-      console.error(err);
+
+      // 🔥 redirigir al callback
+      this.router.navigate(['/auth/callback']);
+    } catch (err: any) {
+      alert(err.message);
+    } finally {
+      this.loading = false;
     }
+  }
+
+  async loginGoogle() {
+    await this.auth.loginWithGoogle();
   }
 }

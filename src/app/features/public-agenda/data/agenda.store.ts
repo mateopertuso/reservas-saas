@@ -1,4 +1,4 @@
-import { Injectable, signal } from '@angular/core';
+import { computed, effect, Injectable, signal } from '@angular/core';
 import { PublicAgendaApi } from './public-agenda.api';
 
 @Injectable({
@@ -27,6 +27,20 @@ export class AgendaStore {
   sucursalSeleccionada = signal<any | null>(null);
 
   reservaCreada = signal<boolean>(false);
+
+  constructor() {
+    effect(() => {
+      const sucursal = this.sucursalSeleccionada();
+
+      if (!sucursal) return;
+
+      console.log('Sucursal cambió → limpiando flujo');
+
+      this.servicioSeleccionado.set(null);
+      this.profesionalSeleccionado.set(null);
+      this.horarios.set([]);
+    });
+  }
 
   async cargarAgenda(slug: string) {
     this.loading.set(true);
@@ -161,4 +175,13 @@ export class AgendaStore {
       this.loading.set(false);
     }
   }
+
+  serviciosFiltrados = computed(() => {
+    const servicios = this.servicios();
+    const sucursal = this.sucursalSeleccionada();
+
+    if (!sucursal) return servicios;
+
+    return servicios.filter((s) => s.sucursal_id === sucursal.id);
+  });
 }

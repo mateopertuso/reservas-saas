@@ -5,6 +5,7 @@ import { ReservasComponent } from './components/reservas/reservas.component';
 import { ServiciosComponent } from './components/servicios/servicios.component';
 import { DisponibilidadComponent } from './components/disponibilidad/disponibilidad.component';
 import { ProfesionalServiciosComponent } from './components/profesionales/profesional-servicios.component';
+import { SucursalesComponent } from './components/sucursales/sucursales.component';
 
 export const EMPRESA_ROUTES: Routes = [
   {
@@ -16,6 +17,7 @@ export const EMPRESA_ROUTES: Routes = [
       { path: 'servicios', component: ServiciosComponent },
       { path: 'disponibilidad', component: DisponibilidadComponent },
       { path: 'profesional-servicios', component: ProfesionalServiciosComponent },
+      { path: 'sucursales', component: SucursalesComponent },
       { path: '', redirectTo: 'agenda', pathMatch: 'full' },
     ],
   },

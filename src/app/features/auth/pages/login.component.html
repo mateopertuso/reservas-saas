@@ -1,6 +1,85 @@
-<div class="p-6 max-w-sm mx-auto">
-  <input [(ngModel)]="email" placeholder="Email" class="input" />
-  <input [(ngModel)]="password" type="password" placeholder="Password" class="input mt-2" />
+﻿<div
+  class="relative min-h-screen overflow-hidden bg-surface text-on-surface selection:bg-primary selection:text-on-primary flex items-center justify-center px-6 py-12"
+>
+  <div
+    class="pointer-events-none absolute inset-0 bg-linear-to-br from-surface via-surface to-surface-container-low"
+  ></div>
+  <div
+    class="pointer-events-none absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[110%] h-[110%] bg-linear-to-tr from-accent-soft/30 via-transparent to-surface-container-high/40 rounded-full blur-3xl"
+  ></div>
+  <div class="relative z-10 w-full max-w-5xl grid gap-10 lg:grid-cols-2 items-center">
+    <!-- LADO IZQUIERDO -->
+    <section class="text-center lg:text-left animate-slide-up">
+      <span
+        class="inline-flex items-center gap-2 bg-surface-container-high text-on-surface-variant text-xs font-semibold px-4 py-1.5 rounded-full mb-5 animate-fade-in"
+      >
+        <span class="w-2 h-2 rounded-full bg-success animate-pulse"></span>
+        Agenda simple para profesionales
+      </span>
 
-  <button (click)="login()" class="btn mt-4 w-full">Login</button>
+      <h1
+        class="text-4xl sm:text-5xl md:text-6xl font-extrabold tracking-tight leading-[1.1] mb-4 text-on-surface animate-slide-up delay-100"
+      >
+        Gestioná tu agenda
+        <span class="text-on-surface-variant">en segundos</span>
+      </h1>
+
+      <p
+        class="text-on-surface-variant text-lg md:text-xl leading-relaxed max-w-lg mx-auto lg:mx-0 animate-slide-up delay-200"
+      >
+        Iniciá sesión para gestionar reservas, empleados, servicios y horarios desde un solo lugar.
+      </p>
+    </section>
+
+    <section
+      class="bg-white border border-outline-subtle rounded-2xl shadow-hero p-6 sm:p-8 animate-scale-in delay-300"
+    >
+      <div class="mb-6 text-center lg:text-left">
+        <div class="text-2xl font-bold tracking-tight text-on-surface">Slation</div>
+        <p class="text-sm text-on-surface-variant mt-1">Accedé a tu cuenta</p>
+      </div>
+
+      <button
+        (click)="loginGoogle()"
+        [disabled]="loading"
+        class="w-full flex cursor-pointer items-center justify-center gap-2 border border-outline rounded-lg py-3 font-medium hover:bg-surface-container-low transition-colors duration-200 disabled:opacity-60 disabled:cursor-not-allowed"
+      >
+        <img src="https://www.svgrepo.com/show/475656/google-color.svg" class="w-5 h-5" />
+        Continuar con Google
+      </button>
+
+      <div class="flex items-center gap-3 my-5">
+        <div class="h-px flex-1 bg-outline-subtle"></div>
+        <span class="text-xs text-on-surface-variant">o con email</span>
+        <div class="h-px flex-1 bg-outline-subtle"></div>
+      </div>
+
+      <div class="space-y-3">
+        <input
+          [(ngModel)]="email"
+          placeholder="Email"
+          class="w-full border border-outline-subtle bg-white px-3.5 py-3 rounded-lg outline-none focus:border-on-surface-variant transition-colors"
+        />
+
+        <input
+          [(ngModel)]="password"
+          type="password"
+          placeholder="Contraseña"
+          class="w-full border border-outline-subtle bg-white px-3.5 py-3 rounded-lg outline-none focus:border-on-surface-variant transition-colors"
+        />
+      </div>
+
+      <button
+        (click)="login()"
+        [disabled]="loading"
+        class="w-full mt-5 cursor-pointer bg-primary text-on-primary py-3 rounded-lg font-semibold hover:bg-primary-hover transition-colors duration-200 disabled:opacity-60 disabled:cursor-not-allowed"
+      >
+        {{ loading ? 'Ingresando...' : 'Iniciar sesión' }}
+      </button>
+
+      <p class="mt-4 text-xs text-on-surface-variant text-center">
+        Al continuar aceptás los términos y la política de privacidad.
+      </p>
+    </section>
+  </div>
 </div>

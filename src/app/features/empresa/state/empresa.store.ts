@@ -16,6 +16,12 @@ export class EmpresaStore {
   errorDisponibilidad = signal<string | null>(null);
   contexto = signal<any | null>(null);
   agenda = signal<any[]>([]);
+  sucursales = signal<any[]>([]);
+  disponibilidadPorProfesional = signal<Record<string, any[]>>({});
+  disponibilidadLoaded = signal(false);
+
+  loadingSucursales = signal(false);
+  errorSucursales = signal<string | null>(null);
 
   async cargarContexto() {
     try {
@@ -33,6 +39,7 @@ export class EmpresaStore {
     try {
       const data = await EmpresaApi.getReservas();
       this.reservas.set(data);
+      console.log('RESERVAS DATA:', data);
     } catch (err: any) {
       this.error.set('No se pudieron cargar las reservas');
       this.reservas.set([]);
@@ -46,6 +53,20 @@ export class EmpresaStore {
     await this.cargarReservas();
   }
 
+  async actualizarEstadoReserva(id: string, estado: string) {
+    console.log('👉 cambiar estado', id, estado);
+
+    try {
+      this.reservas.update((rs) => rs.map((r) => (r.id === id ? { ...r, estado } : r)));
+
+      await EmpresaApi.actualizarEstadoReserva(id, estado);
+
+      console.log('✅ RPC OK');
+    } catch (err) {
+      console.error('❌ ERROR STORE', err);
+      this.error.set('Error actualizando estado');
+    }
+  }
   async cargarServicios(empresaId: string) {
     this.loading.set(true);
 
@@ -187,6 +208,56 @@ export class EmpresaStore {
       this.agenda.set(data ?? []);
     } finally {
       this.loading.set(false);
+    }
+  }
+
+  async cargarDisponibilidadTodos(profesionales: any[]) {
+    if (this.disponibilidadLoaded()) return;
+
+    const result: Record<string, any[]> = {};
+
+    for (const p of profesionales) {
+      try {
+        const data = await EmpresaApi.getDisponibilidadProfesional(p.id);
+        result[p.id] = data ?? [];
+      } catch {
+        result[p.id] = [];
+      }
+    }
+
+    this.disponibilidadPorProfesional.set(result);
+    this.disponibilidadLoaded.set(true);
+  }
+
+  async cargarSucursales() {
+    this.loadingSucursales.set(true);
+    this.errorSucursales.set(null);
+
+    try {
+      const data = await EmpresaApi.getSucursales();
+      this.sucursales.set(data);
+    } catch (err) {
+      this.errorSucursales.set('Error cargando sucursales');
+      this.sucursales.set([]);
+    } finally {
+      this.loadingSucursales.set(false);
+    }
+  }
+
+  async crearSucursal(data: {
+    nombre: string;
+    direccion: string;
+    ciudad: string;
+    telefono?: string;
+  }) {
+    try {
+      await EmpresaApi.crearSucursal(data);
+
+      // 🔥 recargar lista
+      await this.cargarSucursales();
+    } catch (err) {
+      console.error(err);
+      this.errorSucursales.set('Error creando sucursal');
     }
   }
 }

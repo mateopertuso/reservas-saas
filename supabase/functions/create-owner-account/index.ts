@@ -34,8 +34,8 @@ Deno.serve(async (req: Request) => {
 
   try {
     const authHeader = req.headers.get('Authorization');
-console.log('SERVICE ROLE:', Deno.env.get('SUPABASE_SERVICE_ROLE_KEY'));
-console.log('URL:', Deno.env.get('SUPABASE_URL'));
+    console.log('SERVICE ROLE:', Deno.env.get('SUPABASE_SERVICE_ROLE_KEY'));
+    console.log('URL:', Deno.env.get('SUPABASE_URL'));
     if (!authHeader) {
       return json({ error: 'Missing Authorization header' }, 401);
     }
@@ -45,12 +45,11 @@ console.log('URL:', Deno.env.get('SUPABASE_URL'));
     // 🔥 Cliente ADMIN (clave)
     const supabaseAdmin = createClient(
       Deno.env.get('SUPABASE_URL')!,
-      Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
+      Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!,
     );
 
     // 🔥 Validar usuario con token
-    const { data: userData, error: userError } =
-      await supabaseAdmin.auth.getUser(token);
+    const { data: userData, error: userError } = await supabaseAdmin.auth.getUser(token);
 
     if (userError || !userData.user) {
       console.error('AUTH ERROR:', userError);
@@ -70,15 +69,12 @@ console.log('URL:', Deno.env.get('SUPABASE_URL'));
     }
 
     // 🔥 Llamar RPC
-    const { data, error } = await supabaseAdmin.rpc(
-      'create_owner_onboarding',
-      {
-        p_user_id: user.id,
-        p_nombre: nombre,
-        p_rubro: rubro,
-        p_color_tema: color,
-      }
-    );
+    const { data, error } = await supabaseAdmin.rpc('create_owner_onboarding', {
+      p_user_id: user.id,
+      p_nombre: nombre,
+      p_rubro: rubro,
+      p_color_tema: color,
+    });
 
     if (error) {
       console.error('RPC ERROR:', error);
@@ -101,7 +97,7 @@ console.log('URL:', Deno.env.get('SUPABASE_URL'));
       {
         error: err instanceof Error ? err.message : 'Unexpected error',
       },
-      500
+      500,
     );
   }
 });

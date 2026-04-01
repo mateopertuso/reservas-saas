@@ -209,4 +209,35 @@ export class EmpresaApi {
 
     return data;
   }
+
+  static async crearSucursal(data: {
+    nombre: string;
+    direccion: string;
+    ciudad: string;
+    telefono?: string;
+  }) {
+    const { error } = await supabase.rpc('crear_sucursal', {
+      p_nombre: data.nombre,
+      p_direccion: data.direccion,
+      p_ciudad: data.ciudad,
+      p_telefono: data.telefono ?? '',
+    });
+
+    if (error) {
+      console.error('ERROR CREAR SUCURSAL', error);
+      throw error;
+    }
+  }
+
+  static async actualizarEstadoReserva(id: string, estado: string) {
+    const { error } = await supabase.rpc('actualizar_estado_reserva_empresa', {
+      p_reserva: id,
+      p_estado: estado,
+    });
+
+    if (error) {
+      console.error('ERROR ACTUALIZAR ESTADO', error);
+      throw error;
+    }
+  }
 }

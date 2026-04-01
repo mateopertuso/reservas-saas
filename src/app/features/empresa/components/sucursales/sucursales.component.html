@@ -1,0 +1,30 @@
+<h1 class="text-xl font-semibold mb-4">Sucursales</h1>
+
+<div class="space-y-2 mb-6">
+  <input [(ngModel)]="nombre" placeholder="Nombre" class="border p-2 w-full rounded" />
+  <input [(ngModel)]="direccion" placeholder="Dirección" class="border p-2 w-full rounded" />
+  <input [(ngModel)]="ciudad" placeholder="Ciudad" class="border p-2 w-full rounded" />
+  <input [(ngModel)]="telefono" placeholder="Teléfono" class="border p-2 w-full rounded" />
+
+  <button (click)="crear()" class="bg-slate-900 text-white px-4 py-2 rounded w-full">
+    Crear sucursal
+  </button>
+</div>
+
+<div *ngIf="store.loadingSucursales()" class="text-sm text-slate-500">Cargando sucursales...</div>
+
+<div *ngIf="store.errorSucursales()" class="text-red-500 text-sm">
+  {{ store.errorSucursales() }}
+</div>
+
+<div *ngIf="store.sucursales().length === 0" class="text-sm text-slate-500">
+  No hay sucursales todavía
+</div>
+
+<div class="space-y-2">
+  <div *ngFor="let s of store.sucursales()" class="border p-3 rounded bg-white">
+    <p class="font-medium">{{ s.nombre }}</p>
+    <p class="text-sm text-slate-500">{{ s.direccion }}</p>
+    <p class="text-xs text-slate-400">{{ s.ciudad }}</p>
+  </div>
+</div>

@@ -1,8 +1,7 @@
-import { Component, inject, OnInit, signal } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { EmpresaStore } from '../../state/empresa.store';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
-import { EmpresaApi } from '../../services/empresa.api';
 
 @Component({
   standalone: true,
@@ -24,45 +23,17 @@ export class DisponibilidadComponent implements OnInit {
   editInicio = '';
   editFin = '';
 
-  disponibilidadPorProfesional = signal<Record<string, any[]>>({});
+  ngOnInit() {
+    const contexto = this.store.contexto();
 
-  async ngOnInit() {
-  const contexto = this.store.contexto();
-
-  if (contexto?.rol === 'professional') {
-    this.profesionalId = contexto.profesional_id;
-    this.store.cargarDisponibilidad(this.profesionalId);
-  }
-
-  if (contexto?.rol === 'owner') {
-    console.log('PROFESIONALES:', this.store.profesionales());
-
-    await this.cargarTodos(); // 🔥 ESTO FALTABA
-  }
-}
-
-
-  async cargarTodos() {
-  const profesionales = this.store.profesionales();
-
-  const result: Record<string, any[]> = {};
-
-  for (const p of profesionales) {
-    try {
-      const data = await EmpresaApi.getDisponibilidadProfesional(p.id);
-      console.log('DISPONIBILIDAD', p.nombre, data);
-
-      result[p.id] = data ?? [];
-    } catch (e) {
-      console.error('Error en', p.nombre, e);
-      result[p.id] = [];
+    if (contexto?.rol === 'professional') {
+      this.profesionalId = contexto.profesional_id;
     }
   }
 
-  this.disponibilidadPorProfesional.set(result);
-}
-  
-
+  get disponibilidadPorProfesional() {
+    return this.store.disponibilidadPorProfesional();
+  }
 
   editar(d: any) {
     this.editandoId = d.id;
@@ -86,14 +57,6 @@ export class DisponibilidadComponent implements OnInit {
     this.editandoId = null;
   }
 
-  cargar() {
-    this.store.errorDisponibilidad.set(null);
-
-    if (this.profesionalId) {
-      this.store.cargarDisponibilidad(this.profesionalId);
-    }
-  }
-
   crear() {
     if (!this.fecha) return;
 
@@ -115,6 +78,4 @@ export class DisponibilidadComponent implements OnInit {
   eliminar(id: string) {
     this.store.eliminarDisponibilidad(id);
   }
-
-  
 }

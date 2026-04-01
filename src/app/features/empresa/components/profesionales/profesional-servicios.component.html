@@ -39,10 +39,17 @@
         </select>
       }
 
+      <select [(ngModel)]="sucursalSeleccionada" class="w-full border p-2 rounded">
+        <option value="">Sucursal</option>
+        @for (s of store.sucursales(); track s.id) {
+          <option [value]="s.id">{{ s.nombre }}</option>
+        }
+      </select>
+
       <!-- servicio -->
       <select [(ngModel)]="servicioId" class="w-full border p-2 rounded">
         <option value="">Servicio</option>
-        @for (s of store.servicios(); track s.id) {
+        @for (s of serviciosFiltrados; track s.id) {
           <option [value]="s.id">{{ s.nombre }}</option>
         }
       </select>
@@ -81,7 +88,7 @@
 
         <select [(ngModel)]="sucursalSeleccionada" class="w-full border p-2 rounded">
           <option value="">Sucursal</option>
-          @for (s of sucursales; track s.id) {
+          @for (s of store.sucursales(); track s.id) {
             <option [value]="s.id">{{ s.nombre }}</option>
           }
         </select>
@@ -101,7 +108,7 @@
         <input [(ngModel)]="nombreNuevo" placeholder="Nombre" class="w-full border p-2 rounded" />
 
         <select [(ngModel)]="sucursalSeleccionada" class="w-full border p-2 rounded">
-          @for (s of sucursales; track s.id) {
+          @for (s of store.sucursales(); track s.id) {
             <option [value]="s.id">{{ s.nombre }}</option>
           }
         </select>

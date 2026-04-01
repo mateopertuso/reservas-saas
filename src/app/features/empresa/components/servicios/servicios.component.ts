@@ -1,7 +1,8 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, effect } from '@angular/core';
 import { EmpresaStore } from '../../state/empresa.store';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
+import { SessionService } from '../../../auth/services/session.service';
 
 @Component({
   selector: 'app-servicios',
@@ -11,26 +12,41 @@ import { CommonModule } from '@angular/common';
 })
 export class ServiciosComponent {
   store = inject(EmpresaStore);
-
-  empresaId = '3b80b251-1581-438e-a4fb-9dec140b9039';
+  session = inject(SessionService);
 
   nombre = '';
+  sucursalId = '';
+
+  constructor() {
+    effect(() => {
+      const sucursales = this.store.sucursales();
+
+      if (sucursales.length === 1 && !this.sucursalId) {
+        this.sucursalId = sucursales[0].id;
+      }
+    });
+  }
 
   crear() {
-    if (!this.nombre) return;
+    const ctx = this.session.context();
+
+    if (!ctx || !this.nombre || !this.sucursalId) return;
 
     this.store.crearServicio(
       {
         nombre: this.nombre,
-        sucursalId: 'b695e9c6-2a7b-4255-8cf9-5bc1b0ddf75a',
+        sucursalId: this.sucursalId,
       },
-      this.empresaId,
+      ctx.empresa_id,
     );
 
     this.nombre = '';
   }
 
   eliminar(id: string) {
-    this.store.eliminarServicio(id, this.empresaId);
+    const ctx = this.session.context();
+    if (!ctx) return;
+
+    this.store.eliminarServicio(id, ctx.empresa_id);
   }
 }

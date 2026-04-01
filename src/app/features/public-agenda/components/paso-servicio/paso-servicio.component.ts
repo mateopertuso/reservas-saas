@@ -13,7 +13,7 @@ export class PasoServicioComponent {
 
   @Output() siguiente = new EventEmitter<void>();
 
-  servicios = this.store.servicios;
+  servicios = this.store.serviciosFiltrados;
 
   seleccionarServicio(servicio: any) {
     this.store.seleccionarServicio(servicio);

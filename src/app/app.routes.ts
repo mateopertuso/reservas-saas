@@ -17,7 +17,7 @@ export const routes: Routes = [
   {
     path: '',
     component: LandingPageComponent,
-    title: 'TurnoSimple | Gestión de turnos minimalista',
+    title: 'Slation | Gestión de turnos minimalista',
   },
 
   {
@@ -32,8 +32,20 @@ export const routes: Routes = [
       import('./features/auth/pages/test.auth.component').then((m) => m.TestAuthComponent),
   },
   {
+    path: 'auth/callback',
+    loadComponent: () =>
+      import('./features/auth/pages/callback/callback-page.component').then((m) => m.CallbackPage),
+  },
+
+  {
+    path: 'onboarding',
+    loadComponent: () =>
+      import('./features/auth/pages/onboarding/onboarding-page.component').then(
+        (m) => m.OnboardingPage,
+      ),
+  },
+  {
     path: '**',
     redirectTo: '',
   },
-
 ];

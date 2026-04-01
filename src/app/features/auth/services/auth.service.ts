@@ -46,4 +46,13 @@ export class AuthService {
   async logout() {
     await supabase.auth.signOut();
   }
+
+  async loginWithGoogle() {
+    await supabase.auth.signInWithOAuth({
+      provider: 'google',
+      options: {
+        redirectTo: window.location.origin + '/auth/callback',
+      },
+    });
+  }
 }

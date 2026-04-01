@@ -9,6 +9,7 @@ import { PasoFechaComponent } from '../../components/paso-fecha/paso-fecha.compo
 import { PasoHorarioComponent } from '../../components/paso-horario/paso-horario.component';
 import { PasoDatosComponent } from '../../components/paso-datos/paso-datos.component';
 import { PasoConfirmacionComponent } from '../../components/paso-confirmacion/paso-confirmacion.component';
+import { ArrowLeft, LucideAngularModule } from 'lucide-angular';
 
 @Component({
   selector: 'app-agenda-page',
@@ -21,6 +22,7 @@ import { PasoConfirmacionComponent } from '../../components/paso-confirmacion/pa
     PasoHorarioComponent,
     PasoDatosComponent,
     PasoConfirmacionComponent,
+    LucideAngularModule,
   ],
   templateUrl: './agenda-page.html',
   styleUrls: ['./agenda-page.css'],
@@ -29,13 +31,11 @@ export class AgendaPage implements OnInit {
   private route = inject(ActivatedRoute);
   store = inject(AgendaStore);
   paso = signal(1);
+  animando = signal(false);
+
+  arrowLeft = ArrowLeft;
 
   ngOnInit(): void {
-    // const hoy = new Date();
-
-    // const mes = `${hoy.getFullYear()}-${String(hoy.getMonth() + 1).padStart(2, '0')}-01`;
-
-    // this.store.cargarDiasDisponibles(mes);
     const slug = this.route.snapshot.paramMap.get('slug');
 
     if (slug) {
@@ -43,11 +43,39 @@ export class AgendaPage implements OnInit {
     }
   }
 
+  get colorTema() {
+    return this.store.empresa()?.color_tema || '#6366f1'; // fallback indigo
+  }
+
+  get tituloPaso() {
+    return [
+      'Seleccionar sucursal',
+      'Elegir servicio',
+      'Seleccionar profesional',
+      'Elegir fecha',
+      'Elegir horario',
+      'Tus datos',
+      'Confirmación',
+    ][this.paso() - 1];
+  }
+
   siguientePaso() {
-    this.paso.update((p) => p + 1);
+    this.animar(() => this.paso.update((p) => p + 1));
   }
 
   volverPaso() {
-    this.paso.update((p) => p - 1);
+    this.animar(() => this.paso.update((p) => p - 1));
+  }
+
+  animar(callback: () => void) {
+    this.animando.set(true);
+
+    setTimeout(() => {
+      callback();
+
+      setTimeout(() => {
+        this.animando.set(false);
+      }, 150);
+    }, 150);
   }
 }

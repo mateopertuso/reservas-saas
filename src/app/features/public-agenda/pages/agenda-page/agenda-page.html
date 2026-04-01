@@ -1,12 +1,44 @@
-<div class="min-h-screen flex items-center justify-center bg-slate-50">
-  <div class="mb-4 flex items-center justify-between">
-    @if (paso() > 1) {
-      <button (click)="volverPaso()" class="text-sm text-gray-500">← Volver</button>
-    }
+<div
+  class="min-h-screen bg-slate-50 flex flex-col items-center py-10 px-4"
+  [style.--color-primary]="colorTema"
+>
+  <!-- HEADER -->
+  <div class="w-full max-w-xl mb-6">
+    <!-- TOP BAR -->
+    <div class="flex items-center justify-between mb-3">
+      @if (paso() > 1) {
+        <button
+          (click)="volverPaso()"
+          class="cursor-pointer flex items-center gap-2 px-3 py-1.5 rounded-lg border border-slate-200 text-sm text-slate-600 hover:bg-slate-100 transition-colors"
+        >
+          <lucide-icon [img]="arrowLeft" class="w-4 h-4"></lucide-icon>
 
-    <span class="text-sm text-gray-400"> Paso {{ paso() }} de 7 </span>
+          Volver
+        </button>
+      } @else {
+        <div></div>
+      }
+
+      <span class="text-sm text-slate-400"> {{ tituloPaso }} </span>
+    </div>
+
+    <!-- PROGRESS BAR -->
+    <div class="w-full h-2 bg-slate-200 rounded-full overflow-hidden">
+      <div
+        class="h-full transition-all duration-300"
+        [style.width.%]="(paso() / 7) * 100"
+        [style.background]="colorTema"
+      ></div>
+    </div>
   </div>
-  <div class="w-full max-w-xl bg-white rounded-2xl p-6 shadow">
+
+  <!-- CARD -->
+  <div
+    class="w-full max-w-xl bg-white rounded-2xl p-6 shadow-sm border transition-all duration-200"
+    [class.opacity-0]="animando()"
+    [class.-translate-x-4]="animando()"
+    [style.border-color]="colorTema + '30'"
+  >
     @if (paso() === 1) {
       <app-paso-sucursal (siguiente)="siguientePaso()" />
     }
