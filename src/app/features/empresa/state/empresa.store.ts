@@ -23,6 +23,10 @@ export class EmpresaStore {
   loadingSucursales = signal(false);
   errorSucursales = signal<string | null>(null);
 
+  estadoSuscripcion = signal<any | null>(null);
+
+  loadingSuscripcion = signal(true);
+
   async cargarContexto() {
     try {
       const data = await EmpresaApi.getMiContexto();
@@ -259,5 +263,22 @@ export class EmpresaStore {
       console.error(err);
       this.errorSucursales.set('Error creando sucursal');
     }
+  }
+
+  async cargarEstadoSuscripcion() {
+    try {
+      this.loadingSuscripcion.set(true);
+
+      const data = await EmpresaApi.getEstadoSuscripcion();
+      this.estadoSuscripcion.set(data);
+    } catch (err) {
+      console.error(err);
+    } finally {
+      this.loadingSuscripcion.set(false);
+    }
+  }
+
+  puedeUsarSistema() {
+    return this.estadoSuscripcion()?.activo;
   }
 }

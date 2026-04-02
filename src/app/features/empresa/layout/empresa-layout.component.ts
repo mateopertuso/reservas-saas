@@ -1,4 +1,4 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, inject, signal } from '@angular/core';
 import { RouterModule, RouterOutlet } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { EmpresaStore } from '../state/empresa.store';
@@ -33,6 +33,7 @@ export class EmpresaLayoutComponent implements OnInit {
   Users = Users;
   Building2 = Building2;
   LogOut = LogOut;
+  appReady = signal(false);
 
   constructor(
     private session: SessionService,
@@ -40,8 +41,10 @@ export class EmpresaLayoutComponent implements OnInit {
   ) {}
 
   async ngOnInit() {
-    // 🔥 1. cargar contexto
     await this.session.loadContext();
+    await this.store.cargarEstadoSuscripcion();
+
+    this.appReady.set(true);
 
     const ctx = this.session.context();
 
@@ -52,11 +55,9 @@ export class EmpresaLayoutComponent implements OnInit {
 
     const empresaId = ctx.empresa_id;
 
-    // 🎨 2. aplicar color dinámico
     const color = ctx.color_tema || '#3B82F6';
     document.documentElement.style.setProperty('--color-primary', color);
 
-    // 🔥 3. cargas base (paralelas, no dependen entre sí)
     this.store.cargarContexto();
     this.store.cargarSucursales();
     this.store.cargarReservas();
@@ -64,7 +65,6 @@ export class EmpresaLayoutComponent implements OnInit {
     this.store.cargarProfesionalServicios(empresaId);
     this.store.cargarAgenda(new Date().toISOString().slice(0, 10));
 
-    // 🔥 4. flujo dependiente (SECUENCIAL)
     await this.store.cargarProfesionales(empresaId);
 
     const profesionales = this.store.profesionales();
@@ -79,5 +79,35 @@ export class EmpresaLayoutComponent implements OnInit {
     this.session.clear();
 
     window.location.href = '/';
+  }
+
+  puedeUsarSistema() {
+    return this.store.puedeUsarSistema();
+  }
+
+  estadoSuscripcion() {
+    return this.store.estadoSuscripcion();
+  }
+
+  irWhatsapp() {
+    const mensaje = encodeURIComponent('Hola! Quiero activar mi cuenta de Slation.');
+
+    window.open(`https://wa.me/59899743316?text=${mensaje}`, '_blank');
+  }
+
+  diasRestantes() {
+    return this.estadoSuscripcion()?.dias_restantes ?? 0;
+  }
+
+  enTrial() {
+    return this.estadoSuscripcion()?.en_trial;
+  }
+
+  trialColor() {
+    const dias = this.diasRestantes();
+
+    if (dias <= 0) return 'red';
+    if (dias <= 3) return 'yellow';
+    return 'slate';
   }
 }

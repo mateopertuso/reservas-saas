@@ -1,109 +1,194 @@
-<div class="flex min-h-screen" style="background-color: var(--color-primary)">
-  <!-- SIDEBAR -->
-  <aside
-    class="w-64 sticky top-0 h-screen bg-white border-r border-slate-200 flex flex-col shadow-sm"
-  >
-    <!-- Logo/Brand -->
-    <div class="px-6 py-5 border-b border-slate-200">
-      <h1
-        class="text-2xl font-bold bg-linear-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent"
-      >
-        Slation
-      </h1>
-      <p class="text-xs text-slate-500 mt-1">Panel de administración</p>
+@if (!appReady()) {
+  <div class="fixed inset-0 flex items-center justify-center bg-white z-50">
+    <div class="flex flex-col items-center gap-3">
+      <div
+        class="w-8 h-8 border-2 border-slate-300 border-t-[--color-primary] rounded-full animate-spin"
+      ></div>
+
+      <p class="text-sm text-slate-500">Cargando...</p>
     </div>
+  </div>
+}
 
-    <!-- Navigation -->
-    <nav class="flex-1 px-3 py-6 space-y-1 overflow-y-auto">
-      <!-- Agenda -->
-      <a
-        routerLink="/empresa/agenda"
-        routerLinkActive="bg-indigo-50 text-indigo-600"
-        class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-slate-700 hover:bg-slate-50 transition-colors group"
-      >
-        <lucide-icon [img]="Calendar" class="w-5 h-5"></lucide-icon>
-        <span class="font-medium text-sm">Agenda</span>
-      </a>
-
-      <!-- Reservas -->
-      <a
-        routerLink="/empresa/reservas"
-        routerLinkActive="bg-indigo-50 text-indigo-600"
-        class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-slate-700 hover:bg-slate-50 transition-colors group"
-      >
-        <lucide-icon [img]="ClipboardList" class="w-5 h-5"></lucide-icon>
-        <span class="font-medium text-sm">Reservas</span>
-      </a>
-
-      <!-- Disponibilidad -->
-      <a
-        routerLink="/empresa/disponibilidad"
-        routerLinkActive="bg-indigo-50 text-indigo-600"
-        class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-slate-700 hover:bg-slate-50 transition-colors group"
-      >
-        <lucide-icon [img]="Clock" class="w-5 h-5"></lucide-icon>
-        <span class="font-medium text-sm">Disponibilidad</span>
-      </a>
-
-      <!-- Config Section -->
-      @if (store.contexto()?.rol === 'owner') {
-        <div class="pt-6 pb-2">
-          <div class="flex items-center gap-2 px-3 mb-2">
-            <lucide-icon [img]="Settings" class="w-4 h-4 text-slate-500"></lucide-icon>
-            <span class="text-xs font-semibold text-slate-500 uppercase tracking-wider">
-              Configuración
-            </span>
+@if (appReady()) {
+  <div class="flex min-h-screen" style="background-color: var(--color-primary)">
+    @if (appReady() && !puedeUsarSistema()) {
+      <div class="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm">
+        <div class="bg-white w-full max-w-md rounded-2xl p-6 shadow-xl text-center animate-fade-in">
+          <!-- ICON -->
+          <div
+            class="mx-auto mb-4 w-12 h-12 rounded-full flex items-center justify-center"
+            [style.background]="'var(--color-primary)20'"
+          >
+            <lucide-icon
+              [img]="Clock"
+              class="w-6 h-6"
+              [style.color]="'var(--color-primary)'"
+            ></lucide-icon>
           </div>
+
+          <!-- TITLE -->
+          <h2 class="text-lg font-semibold text-slate-900 mb-2">Tu período de prueba terminó</h2>
+
+          <!-- DESC -->
+          <p class="text-sm text-slate-500 mb-5">
+            Seguí usando Slation sin límites y gestioná tus turnos sin interrupciones.
+          </p>
+
+          <!-- BENEFITS -->
+          <div class="text-left text-sm text-slate-600 space-y-2 mb-5">
+            <div class="flex items-center gap-2">
+              <span class="text-green-500">✔</span> Agenda ilimitada
+            </div>
+            <div class="flex items-center gap-2">
+              <span class="text-green-500">✔</span> Gestión de clientes
+            </div>
+            <div class="flex items-center gap-2">
+              <span class="text-green-500">✔</span> Recordatorios y control total
+            </div>
+          </div>
+
+          <!-- CTA -->
+          <button
+            (click)="irWhatsapp()"
+            class="cursor-pointer w-full py-2.5 rounded-lg font-medium text-white transition hover:opacity-90"
+            [style.background]="'var(--color-primary)'"
+          >
+            Activar cuenta
+          </button>
+
+          <!-- FOOTER -->
+          <p class="text-xs text-slate-400 mt-3">Te respondemos en minutos 🚀</p>
         </div>
+      </div>
+    }
 
-        <!-- Servicios -->
-        <a
-          routerLink="/empresa/servicios"
-          routerLinkActive="bg-indigo-50 text-indigo-600"
-          class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-slate-700 hover:bg-slate-50 transition-colors group"
+    <!-- SIDEBAR -->
+    <aside
+      class="w-50 sticky top-0 h-screen bg-white border-r border-slate-200 flex flex-col shadow-sm"
+    >
+      <!-- Logo/Brand -->
+      <div class="px-6 py-5 border-b border-slate-200">
+        <h1
+          class="text-2xl font-bold bg-linear-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent"
         >
-          <lucide-icon [img]="FileText" class="w-5 h-5"></lucide-icon>
-          <span class="font-medium text-sm">Servicios</span>
+          Slation
+        </h1>
+        <p class="text-xs text-slate-500 mt-1">Panel de administración</p>
+      </div>
+
+      <!-- Navigation -->
+      <nav class="flex-1 px-3 py-6 space-y-1 overflow-y-auto">
+        <a
+          routerLink="/empresa/agenda"
+          routerLinkActive="bg-indigo-50 text-indigo-600"
+          class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-slate-700 hover:bg-slate-50 transition-colors"
+        >
+          <lucide-icon [img]="Calendar" class="w-5 h-5"></lucide-icon>
+          <span class="font-medium text-sm">Agenda</span>
         </a>
 
-        <!-- Profesionales -->
         <a
-          routerLink="/empresa/profesional-servicios"
+          routerLink="/empresa/reservas"
           routerLinkActive="bg-indigo-50 text-indigo-600"
-          class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-slate-700 hover:bg-slate-50 transition-colors group"
+          class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-slate-700 hover:bg-slate-50 transition-colors"
         >
-          <lucide-icon [img]="Users" class="w-5 h-5"></lucide-icon>
-          <span class="font-medium text-sm">Profesionales</span>
+          <lucide-icon [img]="ClipboardList" class="w-5 h-5"></lucide-icon>
+          <span class="font-medium text-sm">Reservas</span>
         </a>
 
-        <!-- Sucursales -->
         <a
-          routerLink="/empresa/sucursales"
+          routerLink="/empresa/disponibilidad"
           routerLinkActive="bg-indigo-50 text-indigo-600"
-          class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-slate-700 hover:bg-slate-50 transition-colors group"
+          class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-slate-700 hover:bg-slate-50 transition-colors"
         >
-          <lucide-icon [img]="Building2" class="w-5 h-5"></lucide-icon>
-          <span class="font-medium text-sm">Sucursales</span>
+          <lucide-icon [img]="Clock" class="w-5 h-5"></lucide-icon>
+          <span class="font-medium text-sm">Disponibilidad</span>
         </a>
+
+        @if (store.contexto()?.rol === 'owner') {
+          <div class="pt-6 pb-2">
+            <div class="flex items-center gap-2 px-3 mb-2">
+              <lucide-icon [img]="Settings" class="w-4 h-4 text-slate-500"></lucide-icon>
+              <span class="text-xs font-semibold text-slate-500 uppercase tracking-wider">
+                Configuración
+              </span>
+            </div>
+          </div>
+
+          <a
+            routerLink="/empresa/servicios"
+            routerLinkActive="bg-indigo-50 text-indigo-600"
+            class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-slate-700 hover:bg-slate-50"
+          >
+            <lucide-icon [img]="FileText" class="w-5 h-5"></lucide-icon>
+            Servicios
+          </a>
+
+          <a
+            routerLink="/empresa/profesional-servicios"
+            routerLinkActive="bg-indigo-50 text-indigo-600"
+            class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-slate-700 hover:bg-slate-50"
+          >
+            <lucide-icon [img]="Users" class="w-5 h-5"></lucide-icon>
+            Profesionales
+          </a>
+
+          <a
+            routerLink="/empresa/sucursales"
+            routerLinkActive="bg-indigo-50 text-indigo-600"
+            class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-slate-700 hover:bg-slate-50"
+          >
+            <lucide-icon [img]="Building2" class="w-5 h-5"></lucide-icon>
+            Sucursales
+          </a>
+        }
+      </nav>
+
+      <!-- Logout -->
+      <div class="px-3 py-4 border-t border-slate-200">
+        <button
+          (click)="logout()"
+          class="cursor-pointer flex items-center justify-center gap-2 w-full px-4 py-2.5 rounded-lg bg-slate-100 text-slate-700 hover:bg-slate-200 transition text-sm"
+        >
+          <lucide-icon [img]="LogOut" class="w-4 h-4"></lucide-icon>
+          Cerrar sesión
+        </button>
+      </div>
+    </aside>
+
+    <!-- MAIN -->
+    <main class="flex-1 overflow-auto">
+      @if (enTrial()) {
+        <div
+          class="w-full text-center text-sm py-2 border-b"
+          [ngClass]="{
+            'bg-slate-100 text-slate-600 border-slate-200': trialColor() === 'slate',
+            'bg-yellow-100 text-yellow-800 border-yellow-200': trialColor() === 'yellow',
+            'bg-red-100 text-red-700 border-red-200': trialColor() === 'red',
+          }"
+        >
+          @if (diasRestantes() > 0) {
+            <span>
+              Te quedan <strong class="font-semibold">{{ diasRestantes() }} días</strong> de prueba
+            </span>
+          } @else {
+            <span>Tu prueba terminó</span>
+          }
+
+          @if (diasRestantes() <= 3) {
+            <button
+              (click)="irWhatsapp()"
+              class="ml-3 px-2 py-0.5 rounded-md bg-white/40 hover:bg-white/60 transition font-medium"
+            >
+              Activar cuenta
+            </button>
+          }
+        </div>
       }
-    </nav>
-
-    <!-- Logout -->
-    <div class="px-3 py-4 border-t border-slate-200">
-      <button
-        (click)="logout()"
-        class="flex cursor-pointer items-center justify-center gap-2 w-full px-4 py-2.5 rounded-lg bg-slate-100 text-slate-700 hover:bg-slate-200 transition-colors font-medium text-sm"
-      >
-        <lucide-icon [img]="LogOut" class="w-4 h-4"></lucide-icon>
-        Cerrar sesión
-      </button>
-    </div>
-  </aside>
-
-  <!-- MAIN CONTENT -->
-  <main class="flex-1 overflow-auto">
-    <div class="max-w-7xl mx-auto px-8 py-6">
-      <router-outlet />
-    </div>
-  </main>
-</div>
+      <div class="max-w-7xl mx-auto px-8 py-6">
+        <router-outlet />
+      </div>
+    </main>
+  </div>
+}

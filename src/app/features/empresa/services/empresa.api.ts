@@ -240,4 +240,15 @@ export class EmpresaApi {
       throw error;
     }
   }
+
+  static async getEstadoSuscripcion() {
+    const { data, error } = await supabase.rpc('get_estado_suscripcion');
+
+    if (error) {
+      console.error('ERROR ESTADO SUSCRIPCION', error);
+      throw error;
+    }
+
+    return data?.[0];
+  }
 }
