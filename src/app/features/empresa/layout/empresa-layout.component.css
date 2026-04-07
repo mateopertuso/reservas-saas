@@ -1,0 +1,29 @@
+@keyframes logoFloat {
+  0%,
+  100% {
+    transform: translateY(0px);
+    opacity: 0.9;
+  }
+  50% {
+    transform: translateY(-4px);
+    opacity: 1;
+  }
+}
+
+.animate-logo {
+  animation: logoFloat 2s ease-in-out infinite;
+}
+
+/* barra */
+@keyframes loaderBar {
+  0% {
+    transform: translateX(-120%);
+  }
+  100% {
+    transform: translateX(240%);
+  }
+}
+
+.animate-loader-bar {
+  animation: loaderBar 1.2s ease-in-out infinite;
+}

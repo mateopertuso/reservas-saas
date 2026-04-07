@@ -12,12 +12,13 @@ export const routes: Routes = [
   {
     path: 'login',
     loadComponent: () => import('./features/auth/pages/login.component').then((m) => m.LoginPage),
+    title: 'Slation | Iniciar sesión',
   },
 
   {
     path: '',
     component: LandingPageComponent,
-    title: 'Slation | Gestión de turnos minimalista',
+    title: 'Slation | Gestión de turnos simple',
   },
 
   {

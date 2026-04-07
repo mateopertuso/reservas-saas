@@ -21,6 +21,7 @@ import {
   selector: 'app-empresa-layout',
   imports: [CommonModule, RouterOutlet, RouterModule, LucideAngularModule],
   templateUrl: './empresa-layout.component.html',
+  styleUrl: './empresa-layout.component.css',
 })
 export class EmpresaLayoutComponent implements OnInit {
   store = inject(EmpresaStore);
