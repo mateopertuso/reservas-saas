@@ -1,12 +1,14 @@
-import { CommonModule } from '@angular/common';
+import { CommonModule, TitleCasePipe } from '@angular/common';
 import { Component, computed, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { EmpresaStore } from '../../state/empresa.store';
+import { DatePickerDirective } from '../../../../shared/directives/date-picker.directive';
+import { AppSelectComponent, SelectOption } from '../../../../shared/components/app-select/app-select.component';
 
 @Component({
   selector: 'app-reservas',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, TitleCasePipe, DatePickerDirective, AppSelectComponent],
   templateUrl: './reservas.component.html',
 })
 export class ReservasComponent {
@@ -14,6 +16,18 @@ export class ReservasComponent {
 
   fechaSeleccionada = signal<string | null>(null);
   profesionalSeleccionado = signal<string | null>(null);
+
+  /** Opciones para el select de profesionales */
+  profesionalesOptions = computed<SelectOption[]>(() =>
+    this.store.profesionales().map((p) => ({ label: p.nombre, value: p.id }))
+  );
+
+  /** Opciones para el select de estado dentro de cada card */
+  estadoOptions: SelectOption[] = [
+    { label: 'Pendiente', value: 'pendiente' },
+    { label: 'Confirmada', value: 'confirmada' },
+    { label: 'Cancelada', value: 'cancelada' },
+  ];
 
   reservasFiltradas = computed(() => {
     const reservas = this.store.reservas();

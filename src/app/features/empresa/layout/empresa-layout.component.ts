@@ -36,6 +36,8 @@ export class EmpresaLayoutComponent implements OnInit {
   LogOut = LogOut;
   appReady = signal(false);
 
+  menuAbierto = signal(false);
+
   constructor(
     private session: SessionService,
     private auth: AuthService,
