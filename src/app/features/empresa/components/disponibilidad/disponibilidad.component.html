@@ -1,120 +1,304 @@
-<div class="mt-10">
-  <h2 class="text-xl font-semibold mb-4">
-    {{
-      store.contexto()?.rol === 'professional'
-        ? 'Mi disponibilidad'
-        : 'Disponibilidad por profesional'
-    }}
-  </h2>
+<section class="availability-page">
+  <header class="availability-shell availability-shell--header">
+    <div class="availability-head">
+      <div class="space-y-2">
+        <p class="availability-head__eyebrow">Configuracion semanal</p>
+        <h1 class="availability-head__title">
+          {{
+            store.contexto()?.rol === 'professional'
+              ? 'Mi disponibilidad'
+              : 'Disponibilidad del equipo'
+          }}
+        </h1>
 
-  <!-- ================= OWNER VIEW ================= -->
-  @if (store.contexto()?.rol === 'owner') {
-    <!-- LISTADO GLOBAL -->
-    @for (p of store.profesionales(); track p.id) {
-      <div class="mb-6">
-        <h3 class="font-semibold text-lg mb-2">
-          {{ p.nombre }}
-        </h3>
+        <p class="availability-head__copy">
+          {{
+            store.contexto()?.rol === 'professional'
+              ? 'Organiza tu semana por fecha, ajusta franjas puntuales y revisa cada dia sin mezclar horarios viejos.'
+              : 'Selecciona un profesional y configura su semana por fecha real para editar franjas con contexto.'
+          }}
+        </p>
+      </div>
 
-        @for (d of disponibilidadPorProfesional[p.id] || []; track d.id) {
-          <div class="bg-white border rounded p-3 mb-2">
-            <p>{{ d.fecha | date: 'dd/MM/yyyy' }}</p>
-            <p class="text-sm text-gray-500">{{ d.hora_inicio }} - {{ d.hora_fin }}</p>
+      <div class="availability-context">
+        <p class="availability-context__label">Profesional activo</p>
+        <strong class="availability-context__value">{{ selectedProfessionalName() }}</strong>
+        <p class="availability-context__meta">Semana {{ weekRangeLabel() }}</p>
+      </div>
+    </div>
+
+    <div class="availability-toolbar">
+      @if (store.contexto()?.rol === 'owner') {
+        <label class="availability-field">
+          <span class="availability-field__label">Profesional</span>
+          <select
+            [ngModel]="selectedOwnerProfessionalId()"
+            (ngModelChange)="selectOwnerProfessional($event)"
+            class="availability-field__control"
+          >
+            <option value="">Seleccionar profesional</option>
+            @for (p of store.profesionales(); track p.id) {
+              <option [value]="p.id">{{ p.nombre }}</option>
+            }
+          </select>
+        </label>
+      }
+
+      <section class="availability-quick-add">
+        <div class="availability-quick-add__header">
+          <div>
+            <p class="availability-field__label">Alta rapida</p>
+            <h2 class="availability-quick-add__title">{{ selectedProfessionalName() }}</h2>
           </div>
-        }
+          <p class="availability-quick-add__hint">Agrega una nueva franja en segundos.</p>
+        </div>
 
-        @if (!disponibilidadPorProfesional[p.id]?.length) {
-          <p class="text-sm text-gray-400">Sin disponibilidad</p>
+        <div class="availability-quick-add__grid">
+          <label class="availability-field">
+            <span class="availability-field__label">Fecha</span>
+            <input type="date" [(ngModel)]="fecha" class="availability-field__control" />
+          </label>
+
+          <label class="availability-field">
+            <span class="availability-field__label">Desde</span>
+            <input type="time" [(ngModel)]="inicio" class="availability-field__control" />
+          </label>
+
+          <label class="availability-field">
+            <span class="availability-field__label">Hasta</span>
+            <input type="time" [(ngModel)]="fin" class="availability-field__control" />
+          </label>
+
+          <button
+            type="button"
+            (click)="crear()"
+            [disabled]="store.loading() || isRangeInvalid(inicio, fin)"
+            class="availability-quick-add__submit"
+          >
+            @if (store.loading()) {
+              Guardando...
+            } @else {
+              Agregar franja
+            }
+          </button>
+        </div>
+
+        @if (isRangeInvalid(inicio, fin)) {
+          <p class="availability-inline-error">La hora de fin debe ser mayor a la de inicio.</p>
+        }
+      </section>
+    </div>
+
+    <div class="availability-weekbar">
+      <div class="availability-weekbar__nav">
+        <button type="button" class="availability-weekbar__button" (click)="previousWeek()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M15 18l-6-6 6-6"
+            />
+          </svg>
+        </button>
+
+        <div class="availability-weekbar__label">
+          <span class="availability-field__label">Semana visible</span>
+          <strong>{{ weekRangeLabel() }}</strong>
+        </div>
+
+        <button type="button" class="availability-weekbar__button" (click)="nextWeek()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M9 6l6 6-6 6"
+            />
+          </svg>
+        </button>
+      </div>
+
+      <div class="availability-weekstrip">
+        @for (day of weekColumns(); track day.key) {
+          <button
+            type="button"
+            class="availability-weekstrip__day"
+            [class.availability-weekstrip__day--selected]="day.isSelected"
+            [class.availability-weekstrip__day--today]="day.isToday"
+            (click)="selectDate(day.key)"
+          >
+            <span class="availability-weekstrip__weekday">{{ day.shortLabel }}</span>
+            <span class="availability-weekstrip__number">{{ day.dateNumber }}</span>
+            <span class="availability-weekstrip__count">
+              {{ day.entries.length }}
+            </span>
+          </button>
         }
       </div>
-    }
-
-    <!-- CREAR PARA CUALQUIER PROFESIONAL -->
-    <div class="mt-6 space-y-2">
-      <p class="text-sm text-slate-500">Asignar disponibilidad a:</p>
-
-      <select [(ngModel)]="profesionalId" class="w-full border p-2 rounded">
-        <option value="">Seleccionar profesional</option>
-        @for (p of store.profesionales(); track p.id) {
-          <option [value]="p.id">{{ p.nombre }}</option>
-        }
-      </select>
-
-      <input type="date" [(ngModel)]="fecha" class="w-full border p-2 rounded" />
-      <input type="time" [(ngModel)]="inicio" class="w-full border p-2 rounded" />
-      <input type="time" [(ngModel)]="fin" class="w-full border p-2 rounded" />
-
-      <button
-        (click)="crear()"
-        [disabled]="store.loading()"
-        class="bg-black text-white px-4 py-2 rounded w-full"
-      >
-        @if (store.loading()) {
-          Guardando...
-        } @else {
-          Agregar disponibilidad
-        }
-      </button>
     </div>
-  }
+  </header>
 
-  <!-- ================= PROFESSIONAL VIEW ================= -->
-  @if (store.contexto()?.rol === 'professional') {
-    <!-- LISTA PROPIA -->
-    @for (d of store.disponibilidad(); track d.id) {
-      <div class="border p-3 rounded mb-2">
-        @if (editandoId === d.id) {
-          <div class="flex gap-2">
-            <input type="date" [(ngModel)]="editFecha" class="border p-1 rounded" />
-            <input type="time" [(ngModel)]="editInicio" class="border p-1 rounded" />
-            <input type="time" [(ngModel)]="editFin" class="border p-1 rounded" />
+  @if (!selectedDayEntries().length) {
+    <section class="availability-shell availability-shell--empty">
+      <div class="availability-empty">
+        <div class="availability-empty__icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+            <rect x="3" y="4" width="18" height="18" rx="2" ry="2" stroke-width="1.6" />
+            <line x1="8" y1="2.5" x2="8" y2="6" stroke-width="1.6" />
+            <line x1="16" y1="2.5" x2="16" y2="6" stroke-width="1.6" />
+            <line x1="3" y1="10" x2="21" y2="10" stroke-width="1.6" />
+          </svg>
+        </div>
+
+        <div class="space-y-2">
+          <h2 class="availability-empty__title">No hay horarios para la fecha seleccionada</h2>
+          <p class="availability-empty__copy">
+            Cambia de fecha en la semana visible o agrega una nueva franja para este dia.
+          </p>
+        </div>
+      </div>
+    </section>
+  } @else {
+    <section class="availability-shell availability-shell--board">
+      <div class="availability-board">
+        <aside class="availability-sidebar">
+          <div class="availability-sidebar__card">
+            <p class="availability-field__label">Dia activo</p>
+            <h2 class="availability-sidebar__title">{{ selectedDayLabel() }}</h2>
+            <p class="availability-sidebar__copy">
+              Revisa y ajusta las franjas de este dia sin mezclar horarios de otras fechas.
+            </p>
           </div>
 
-          <div class="mt-2 flex gap-2">
-            <button (click)="guardar(d.id)" class="bg-black text-white px-2 py-1 rounded">
-              Guardar
-            </button>
-            <button (click)="cancelar()" class="px-2 py-1 border rounded">Cancelar</button>
+          <div class="availability-sidebar__list">
+            @for (day of weekColumns(); track day.key) {
+              <button
+                type="button"
+                class="availability-sidebar__item"
+                [class.availability-sidebar__item--selected]="day.isSelected"
+                (click)="selectDate(day.key)"
+              >
+                <div>
+                  <p class="availability-sidebar__item-day">{{ day.label }}</p>
+                  <p class="availability-sidebar__item-date">{{ day.fullDate }}</p>
+                </div>
+                <span class="availability-sidebar__item-count">{{ day.entries.length }}</span>
+              </button>
+            }
           </div>
-        } @else {
-          <div class="flex justify-between items-center">
-            <div (click)="editar(d)" class="cursor-pointer">
-              <p>{{ d.fecha | date: 'dd/MM/yyyy' }}</p>
-              <p>{{ d.hora_inicio }} - {{ d.hora_fin }}</p>
+        </aside>
+
+        <div class="availability-day availability-day--selected">
+          <header class="availability-day__header">
+            <div>
+              <p class="availability-day__eyebrow">Fecha</p>
+              <h2 class="availability-day__title">{{ selectedDayLabel() }}</h2>
             </div>
+            <span class="availability-day__count">
+              {{ selectedDayEntries().length }}
+              {{ selectedDayEntries().length === 1 ? 'franja' : 'franjas' }}
+            </span>
+          </header>
 
-            <button (click)="eliminar(d.id)" class="text-red-500 text-sm">Eliminar</button>
+          <div class="availability-day__ranges">
+            @for (d of selectedDayEntries(); track d.id) {
+              <article class="availability-range">
+                @if (editandoId === d.id) {
+                  <div class="availability-range__edit">
+                    <label class="availability-field">
+                      <span class="availability-field__label">Fecha</span>
+                      <input
+                        type="date"
+                        [(ngModel)]="editFecha"
+                        class="availability-field__control"
+                      />
+                    </label>
+
+                    <div class="availability-range__time-grid">
+                      <label class="availability-field">
+                        <span class="availability-field__label">Desde</span>
+                        <input
+                          type="time"
+                          [(ngModel)]="editInicio"
+                          class="availability-field__control"
+                        />
+                      </label>
+
+                      <label class="availability-field">
+                        <span class="availability-field__label">Hasta</span>
+                        <input
+                          type="time"
+                          [(ngModel)]="editFin"
+                          class="availability-field__control"
+                        />
+                      </label>
+                    </div>
+
+                    @if (isRangeInvalid(editInicio, editFin)) {
+                      <p class="availability-inline-error">
+                        La hora de fin debe ser mayor a la de inicio.
+                      </p>
+                    }
+
+                    <div class="availability-range__actions">
+                      <button
+                        type="button"
+                        (click)="guardar(d.id)"
+                        [disabled]="isRangeInvalid(editInicio, editFin)"
+                        class="availability-range__action availability-range__action--primary"
+                      >
+                        Guardar
+                      </button>
+                      <button type="button" (click)="cancelar()" class="availability-range__action">
+                        Cancelar
+                      </button>
+                    </div>
+                  </div>
+                } @else {
+                  <div class="availability-range__display" (click)="editar(d)">
+                    <div class="availability-range__block">
+                      <div class="availability-range__track">
+                        <div class="availability-range__fill"></div>
+                      </div>
+
+                      <div class="availability-range__content">
+                        <div class="availability-range__time">
+                          <strong>{{ d.hora_inicio }}</strong>
+                          <span>{{ d.hora_fin }}</span>
+                        </div>
+
+                        <div class="availability-range__meta">
+                          <span>{{ formatDate(d.fecha) }}</span>
+                          <span>Disponible</span>
+                        </div>
+                      </div>
+                    </div>
+
+                    <button
+                      type="button"
+                      (click)="eliminar(d.id); $event.stopPropagation()"
+                      class="availability-range__remove"
+                    >
+                      Eliminar
+                    </button>
+                  </div>
+                }
+              </article>
+            }
           </div>
-        }
+        </div>
       </div>
-    }
-
-    <!-- CREAR PROPIO -->
-    <div class="mt-6 space-y-2">
-      <input type="date" [(ngModel)]="fecha" class="w-full border p-2 rounded" />
-      <input type="time" [(ngModel)]="inicio" class="w-full border p-2 rounded" />
-      <input type="time" [(ngModel)]="fin" class="w-full border p-2 rounded" />
-
-      <button
-        (click)="crear()"
-        [disabled]="store.loading()"
-        class="bg-black text-white px-4 py-2 rounded w-full"
-      >
-        @if (store.loading()) {
-          Guardando...
-        } @else {
-          Agregar disponibilidad
-        }
-      </button>
-    </div>
-
-    <p class="mt-4 text-sm text-gray-500">Estás gestionando tu propia disponibilidad</p>
+    </section>
   }
 
-  <!-- ERROR GLOBAL -->
+  @if (store.contexto()?.rol === 'professional') {
+    <p class="availability-footnote">Estas gestionando tu propia disponibilidad semanal.</p>
+  }
+
   @if (store.errorDisponibilidad()) {
-    <div class="mt-4 rounded-lg border border-red-200 bg-red-50 p-3 text-sm text-red-700">
+    <div class="availability-error">
       {{ store.errorDisponibilidad() }}
     </div>
   }
-</div>
+</section>
