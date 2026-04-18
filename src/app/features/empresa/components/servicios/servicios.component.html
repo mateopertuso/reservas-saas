@@ -1,47 +1,139 @@
 @if (store.contexto()?.rol === 'owner') {
-  <div class="mt-10">
-    <h2 class="text-xl font-semibold mb-4">Servicios</h2>
-
-    <!-- Lista -->
-    @if (store.servicios().length) {
-      <div class="space-y-2">
-        @for (s of store.servicios(); track s.id) {
-          <div class="flex justify-between items-center bg-white border p-3 rounded-lg">
-            <div>
-              <p class="font-medium">{{ s.nombre }}</p>
-            </div>
-
-            <button (click)="eliminar(s.id)" class="text-sm text-red-500">Eliminar</button>
-          </div>
+  <section class="services-page">
+    @if (feedback; as state) {
+      <div
+        class="services-feedback"
+        [class.services-feedback--error]="state.type === 'error'"
+        [class.services-feedback--success]="state.type === 'success'"
+      >
+        <strong>{{ state.message }}</strong>
+        @if (state.detail) {
+          <span>{{ state.detail }}</span>
         }
       </div>
     }
 
-    <!-- Crear -->
-    <div class="mt-6 space-y-2">
-      <input
-        [(ngModel)]="nombre"
-        placeholder="Nombre del servicio"
-        class="w-full border rounded px-3 py-2"
-      />
-      <select [(ngModel)]="sucursalId" class="w-full border rounded px-3 py-2">
-        <option value="" disabled selected>Seleccionar sucursal</option>
+    <header class="services-shell services-shell--header">
+      <div class="services-head">
+        <div class="space-y-2">
+          <p class="services-head__eyebrow">Catalogo operativo</p>
+          <h1 class="services-head__title">Servicios</h1>
+          <p class="services-head__copy">
+            Mantene el listado claro y actualizado para que el alta de turnos y la asignacion por
+            sucursal sea rapida de revisar.
+          </p>
+        </div>
 
-        @for (s of store.sucursales(); track s.id) {
-          <option [value]="s.id">
-            {{ s.nombre }}
-          </option>
-        }
-      </select>
+        <div class="services-context">
+          <p class="services-context__label">Servicios cargados</p>
+          <strong class="services-context__value">{{ store.servicios().length }}</strong>
+          <p class="services-context__meta">
+            {{ store.sucursales().length }}
+            {{ store.sucursales().length === 1 ? 'sucursal activa' : 'sucursales activas' }}
+          </p>
+        </div>
+      </div>
 
-      <button (click)="crear()" class="bg-black text-white px-4 py-2 rounded">
-        Crear servicio
-      </button>
-    </div>
-  </div>
+      <section class="services-create">
+        <div class="services-create__header">
+          <div>
+            <p class="services-field__label">Alta rapida</p>
+          </div>
+          <p class="services-create__hint">Define nombre y sucursal sin salir del listado.</p>
+        </div>
+
+        <div class="services-create__grid">
+          <label class="services-field">
+            <span class="services-field__label">Nombre</span>
+            <input
+              [(ngModel)]="nombre"
+              placeholder="Ej. Corte + cejas / Esmaltado / Depilación"
+              class="services-field__control"
+            />
+          </label>
+
+          <label class="services-field">
+            <span class="services-field__label">Sucursal</span>
+            <select [(ngModel)]="sucursalId" class="services-field__control">
+              <option value="">Seleccionar sucursal</option>
+
+              @for (s of store.sucursales(); track s.id) {
+                <option [value]="s.id">{{ s.nombre }}</option>
+              }
+            </select>
+          </label>
+
+          <button
+            type="button"
+            (click)="crear()"
+            [disabled]="!canCreate()"
+            class="services-create__submit"
+          >
+            Crear servicio
+          </button>
+        </div>
+      </section>
+    </header>
+
+    @if (store.servicios().length) {
+      <section class="services-shell services-shell--list">
+        <div class="services-list">
+          @for (s of store.servicios(); track s.id) {
+            <article class="service-row">
+              <div class="service-row__main">
+                <div class="service-row__badge">
+                  {{ s.nombre.slice(0, 1) }}
+                </div>
+
+                <div class="min-w-0">
+                  <h2 class="service-row__title">{{ s.nombre }}</h2>
+                  <p class="service-row__meta">{{ sucursalNombre(s.sucursal_id) }}</p>
+                </div>
+              </div>
+
+              <div class="service-row__actions">
+                <button type="button" class="service-row__delete" (click)="eliminar(s.id)">
+                  Eliminar
+                </button>
+              </div>
+            </article>
+          }
+        </div>
+      </section>
+    } @else {
+      <section class="services-shell services-shell--empty">
+        <div class="services-empty">
+          <div class="services-empty__icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="1.7"
+                d="M4 7h16M7 4h10M6 7l1 13h10l1-13"
+              />
+            </svg>
+          </div>
+
+          <div class="space-y-2">
+            <h2 class="services-empty__title">Todavia no hay servicios cargados</h2>
+            <p class="services-empty__copy">
+              Crea el primer servicio para empezar a organizar el catalogo por sucursal.
+            </p>
+          </div>
+        </div>
+      </section>
+    }
+  </section>
 }
+
 @if (store.contexto()?.rol === 'professional') {
-  <div class="mt-10 p-4 border rounded bg-slate-50">
-    <p class="text-sm text-slate-600">Los servicios son gestionados por la empresa.</p>
-  </div>
+  <section class="services-shell services-shell--notice">
+    <div class="services-notice">
+      <p class="services-head__eyebrow">Solo lectura</p>
+      <h2 class="services-notice__title">Los servicios se gestionan desde la empresa</h2>
+      <p class="services-notice__copy">
+        Desde este perfil no puedes crear ni eliminar servicios del catalogo.
+      </p>
+    </div>
+  </section>
 }

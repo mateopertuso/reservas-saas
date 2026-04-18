@@ -302,3 +302,16 @@
     </div>
   }
 </section>
+
+@if (feedback(); as state) {
+  <div
+    class="availability-feedback"
+    [class.availability-feedback--error]="state.type === 'error'"
+    [class.availability-feedback--success]="state.type === 'success'"
+  >
+    <strong>{{ state.message }}</strong>
+    @if (state.detail) {
+      <span>{{ state.detail }}</span>
+    }
+  </div>
+}

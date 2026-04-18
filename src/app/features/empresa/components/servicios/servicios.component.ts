@@ -9,10 +9,12 @@ import { SessionService } from '../../../auth/services/session.service';
   standalone: true,
   imports: [CommonModule, FormsModule],
   templateUrl: './servicios.component.html',
+  styleUrl: './servicios.component.css',
 })
 export class ServiciosComponent {
   store = inject(EmpresaStore);
   session = inject(SessionService);
+  feedback: { type: 'success' | 'error'; message: string; detail?: string } | null = null;
 
   nombre = '';
   sucursalId = '';
@@ -27,26 +29,58 @@ export class ServiciosComponent {
     });
   }
 
-  crear() {
+  canCreate() {
+    return Boolean(this.nombre.trim() && this.sucursalId);
+  }
+
+  sucursalNombre(id: string) {
+    return this.store.sucursales().find((s) => String(s.id) === String(id))?.nombre ?? 'Sin sucursal';
+  }
+
+  async crear() {
     const ctx = this.session.context();
 
-    if (!ctx || !this.nombre || !this.sucursalId) return;
+    if (!ctx || !this.nombre.trim() || !this.sucursalId) return;
 
-    this.store.crearServicio(
+    const nombre = this.nombre.trim();
+    const sucursalId = this.sucursalId;
+
+    await this.store.crearServicio(
       {
-        nombre: this.nombre,
-        sucursalId: this.sucursalId,
+        nombre,
+        sucursalId,
       },
       ctx.empresa_id,
     );
 
     this.nombre = '';
+    if (this.store.sucursales().length !== 1) {
+      this.sucursalId = '';
+    }
+
+    this.showFeedback('success', 'Servicio creado', `${nombre} · ${this.sucursalNombre(sucursalId)}`);
   }
 
-  eliminar(id: string) {
+  async eliminar(id: string) {
     const ctx = this.session.context();
     if (!ctx) return;
 
-    this.store.eliminarServicio(id, ctx.empresa_id);
+    const servicio = this.store.servicios().find((item) => item.id === id);
+
+    await this.store.eliminarServicio(id, ctx.empresa_id);
+    this.showFeedback(
+      'success',
+      'Servicio eliminado',
+      servicio?.nombre ?? 'El servicio se elimino correctamente',
+    );
+  }
+
+  private showFeedback(type: 'success' | 'error', message: string, detail?: string) {
+    this.feedback = { type, message, detail };
+    window.setTimeout(() => {
+      if (this.feedback?.message === message) {
+        this.feedback = null;
+      }
+    }, 3200);
   }
 }

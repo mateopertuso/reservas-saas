@@ -3,7 +3,6 @@ import { EmpresaStore } from '../../state/empresa.store';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { EmpresaApi } from '../../services/empresa.api';
-import { toast } from 'ngx-sonner';
 
 type DisponibilidadItem = {
   id: string;
@@ -34,6 +33,7 @@ export class DisponibilidadComponent implements OnInit {
   store = inject(EmpresaStore);
   selectedOwnerProfessionalId = signal('');
   selectedDate = signal(this.todayKey());
+  feedback = signal<{ type: 'success' | 'error'; message: string; detail?: string } | null>(null);
 
   profesionalId = '';
   fecha = '';
@@ -208,13 +208,15 @@ export class DisponibilidadComponent implements OnInit {
       await this.refreshCurrentAvailability();
       this.editandoId = null;
       this.selectDate(this.editFecha);
-      toast.success('Franja actualizada', {
-        description: `${this.formatDate(this.editFecha)} · ${this.editInicio} - ${this.editFin}`,
-      });
+      this.showFeedback(
+        'success',
+        'Franja actualizada',
+        `${this.formatDate(this.editFecha)} · ${this.editInicio} - ${this.editFin}`,
+      );
       return;
     }
 
-    toast.error('No se pudo actualizar la franja');
+    this.showFeedback('error', 'No se pudo actualizar la franja');
   }
 
   async crear() {
@@ -246,13 +248,15 @@ export class DisponibilidadComponent implements OnInit {
       this.inicio = '';
       this.fin = '';
 
-      toast.success('Franja agregada', {
-        description: `${this.formatDate(fechaCreada)} · ${inicioCreado} - ${finCreado}`,
-      });
+      this.showFeedback(
+        'success',
+        'Franja agregada',
+        `${this.formatDate(fechaCreada)} · ${inicioCreado} - ${finCreado}`,
+      );
       return;
     }
 
-    toast.error('No se pudo agregar la franja');
+    this.showFeedback('error', 'No se pudo agregar la franja');
   }
 
   async eliminar(id: string) {
@@ -260,11 +264,11 @@ export class DisponibilidadComponent implements OnInit {
 
     if (!this.store.errorDisponibilidad()) {
       await this.refreshCurrentAvailability();
-      toast.success('Franja eliminada');
+      this.showFeedback('success', 'Franja eliminada');
       return;
     }
 
-    toast.error('No se pudo eliminar la franja');
+    this.showFeedback('error', 'No se pudo eliminar la franja');
   }
 
   private todayKey() {
@@ -290,6 +294,15 @@ export class DisponibilidadComponent implements OnInit {
     start.setDate(start.getDate() + diff);
     start.setHours(0, 0, 0, 0);
     return start;
+  }
+
+  private showFeedback(type: 'success' | 'error', message: string, detail?: string) {
+    this.feedback.set({ type, message, detail });
+    window.setTimeout(() => {
+      if (this.feedback()?.message === message) {
+        this.feedback.set(null);
+      }
+    }, 3200);
   }
 
   private async refreshCurrentAvailability() {
