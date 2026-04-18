@@ -37,6 +37,7 @@ export class EmpresaLayoutComponent implements OnInit {
   appReady = signal(false);
 
   menuAbierto = signal(false);
+  panelSuscripcionAbierto = signal(false);
 
   constructor(
     private session: SessionService,
@@ -112,5 +113,25 @@ export class EmpresaLayoutComponent implements OnInit {
     if (dias <= 0) return 'red';
     if (dias <= 3) return 'yellow';
     return 'slate';
+  }
+
+  togglePanelSuscripcion() {
+    this.panelSuscripcionAbierto.update((value) => !value);
+  }
+
+  estadoSuscripcionTitulo() {
+    if (this.enTrial()) return 'Periodo de prueba';
+    if (this.puedeUsarSistema()) return 'Cuenta activa';
+    return 'Cuenta pausada';
+  }
+
+  estadoSuscripcionResumen() {
+    if (this.enTrial() && this.diasRestantes() > 0) {
+      return `${this.diasRestantes()} dias restantes`;
+    }
+
+    if (this.puedeUsarSistema()) return 'Sistema habilitado';
+
+    return 'Necesita activacion';
   }
 }

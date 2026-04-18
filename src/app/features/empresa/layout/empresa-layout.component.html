@@ -1,298 +1,311 @@
 @if (!appReady()) {
-  <div
-    class="fixed inset-0 z-50 flex items-center justify-center bg-linear-to-br from-stone-50 to-stone-100"
-  >
-    <div class="flex flex-col items-center gap-8">
-      <!-- LOGO -->
+  <div class="loading-screen">
+    <div class="loading-screen__content">
       <div class="relative">
         <img
           src="assets/slation.png"
           alt="Slation"
-          class="h-20 md:h-24 rounded-xl w-auto select-none animate-logo drop-shadow-lg"
+          class="loading-screen__logo animate-logo"
           draggable="false"
         />
       </div>
 
-      <!-- LOADING BAR -->
-      <div class="w-40 h-1.5 bg-stone-200 rounded-full overflow-hidden shadow-inner">
-        <div
-          class="h-full w-1/2 rounded-full animate-loader-bar shadow-sm"
-          style="background-color: var(--color-primary)"
-        ></div>
+      <div class="loading-screen__track">
+        <div class="loading-screen__bar animate-loader-bar"></div>
       </div>
     </div>
   </div>
 }
 
 @if (appReady()) {
-  <div class="flex flex-col md:flex-row min-h-screen bg-stone-50" style="background-color: var(--color-primary)">
+  <div class="admin-shell">
+    <div class="admin-shell__ambient"></div>
+
     @if (appReady() && !puedeUsarSistema()) {
-      <div
-        class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-md p-4"
-      >
-        <div
-          class="bg-white w-full max-w-md rounded-2xl p-6 md:p-8 shadow-2xl text-center animate-fade-in"
-        >
-          <div
-            class="mx-auto mb-5 w-16 h-16 rounded-2xl flex items-center justify-center shadow-sm"
-            [style.background]="'var(--color-primary)20'"
-          >
+      <div class="trial-lock">
+        <div class="trial-lock__panel animate-fade-in">
+          <div class="trial-lock__icon" [style.background]="'var(--color-primary)12'">
             <lucide-icon
               [img]="Clock"
-              class="w-8 h-8"
+              class="h-8 w-8"
               [style.color]="'var(--color-primary)'"
             ></lucide-icon>
           </div>
 
-          <h2 class="text-xl md:text-2xl font-bold text-stone-900 mb-3">
-            Tu período de prueba terminó
-          </h2>
+          <div class="space-y-3">
+            <p class="trial-lock__eyebrow">Cuenta pausada</p>
+            <h2 class="trial-lock__title">Tu periodo de prueba termino</h2>
+            <p class="trial-lock__copy">
+              Activa tu cuenta para seguir administrando reservas, disponibilidad y equipo sin
+              interrupciones.
+            </p>
+          </div>
 
-          <p class="text-sm md:text-base text-stone-600 mb-6 leading-relaxed">
-            Seguí usando Slation sin límites y gestioná tus turnos sin interrupciones.
-          </p>
-
-          <div
-            class="text-left text-sm md:text-base text-stone-700 space-y-3 mb-6 bg-stone-50 rounded-xl p-4"
-          >
-            <div class="flex items-center gap-3">
-              <span class="text-green-600 text-lg">✔</span>
-              <span class="font-medium">Agenda ilimitada</span>
+          <div class="trial-lock__benefits">
+            <div class="trial-lock__benefit">
+              <span class="trial-lock__benefit-dot"></span>
+              <span>Agenda y reservas sin limite</span>
             </div>
-            <div class="flex items-center gap-3">
-              <span class="text-green-600 text-lg">✔</span>
-              <span class="font-medium">Gestión de clientes</span>
+            <div class="trial-lock__benefit">
+              <span class="trial-lock__benefit-dot"></span>
+              <span>Gestion centralizada del staff</span>
             </div>
-            <div class="flex items-center gap-3">
-              <span class="text-green-600 text-lg">✔</span>
-              <span class="font-medium">Recordatorios y control total</span>
+            <div class="trial-lock__benefit">
+              <span class="trial-lock__benefit-dot"></span>
+              <span>Seguimiento operativo desde un solo panel</span>
             </div>
           </div>
 
           <button
             (click)="irWhatsapp()"
-            class="cursor-pointer w-full py-3.5 rounded-xl font-semibold text-white transition-all hover:opacity-90 hover:scale-[1.02] active:scale-[0.98] shadow-lg"
+            class="trial-lock__cta"
             [style.background]="'var(--color-primary)'"
           >
             Activar cuenta
           </button>
 
-          <p class="text-xs md:text-sm text-stone-500 mt-4 font-medium">
-            Te respondemos en minutos 🚀
-          </p>
+          <p class="trial-lock__footnote">Respondemos por WhatsApp en minutos.</p>
         </div>
       </div>
     }
 
-    <!-- SIDEBAR DESKTOP -->
-    <aside
-      class="fixed md:sticky top-0 left-0 z-40 h-screen w-72 bg-white border-r border-stone-200 flex flex-col shadow-lg md:shadow-none transform transition-transform duration-300 ease-in-out -translate-x-full md:translate-x-0"
-      [class.translate-x-0]="menuAbierto()"
-    >
-      <!-- Header -->
-      <div class="px-6 py-6 border-b border-stone-200 bg-linear-to-br from-white to-stone-50">
-        <div class="flex items-center gap-3">
-          <div
-            class="w-10 h-10 rounded-xl flex items-center justify-center shadow-sm"
-            [style.background]="'var(--color-primary)'"
-          >
-            <span class="text-white font-bold text-lg">S</span>
+    <aside class="admin-rail" [class.admin-rail--open]="menuAbierto()">
+      <div class="admin-rail__header">
+        <a routerLink="/empresa/agenda" class="brand-mark">
+          <div class="brand-mark__symbol" [style.background]="'var(--color-primary)'">
+            <span>S</span>
           </div>
-          <div>
-            <h1
-              class="text-xl font-bold tracking-tight cursor-pointer transition hover:opacity-80"
-              style="font-family: 'Plus Jakarta Sans', sans-serif"
-            >
-              Slation
-            </h1>
-            <p class="text-xs text-stone-500 font-medium">Panel de administración</p>
+
+          <div class="min-w-0">
+            <p class="brand-mark__name">Slation</p>
+            <p class="brand-mark__meta">
+              {{ store.contexto()?.rol === 'owner' ? 'Administrador' : 'Profesional' }}
+            </p>
           </div>
-        </div>
+        </a>
       </div>
 
-      <!-- Navigation -->
-      <nav class="flex-1 px-4 py-6 space-y-1.5 overflow-y-auto">
-        <a
-          routerLink="/empresa/agenda"
-          (click)="menuAbierto.set(false)"
-          routerLinkActive="bg-gradient-to-r from-indigo-50 to-indigo-100 text-indigo-700 shadow-sm font-semibold"
-          class="flex items-center gap-3 px-4 py-3 rounded-xl text-stone-700 hover:bg-stone-50 transition-all duration-200 group"
-        >
-          <lucide-icon
-            [img]="Calendar"
-            class="w-5 h-5 transition-transform group-hover:scale-110"
-          ></lucide-icon>
-          <span class="font-medium text-sm">Agenda</span>
-        </a>
+      <nav class="admin-nav">
+        <div class="admin-nav__group">
+          <p class="admin-nav__label">Gestion diaria</p>
 
-        <a
-          routerLink="/empresa/reservas"
-          (click)="menuAbierto.set(false)"
-          routerLinkActive="bg-gradient-to-r from-indigo-50 to-indigo-100 text-indigo-700 shadow-sm font-semibold"
-          class="flex items-center gap-3 px-4 py-3 rounded-xl text-stone-700 hover:bg-stone-50 transition-all duration-200 group"
-        >
-          <lucide-icon
-            [img]="ClipboardList"
-            class="w-5 h-5 transition-transform group-hover:scale-110"
-          ></lucide-icon>
-          <span class="font-medium text-sm">Reservas</span>
-        </a>
+          <a
+            routerLink="/empresa/agenda"
+            (click)="menuAbierto.set(false)"
+            routerLinkActive="admin-nav__link--active"
+            class="admin-nav__link"
+          >
+            <lucide-icon [img]="Calendar" class="admin-nav__icon"></lucide-icon>
+            <span>Agenda</span>
+          </a>
 
-        <a
-          routerLink="/empresa/disponibilidad"
-          (click)="menuAbierto.set(false)"
-          routerLinkActive="bg-gradient-to-r from-indigo-50 to-indigo-100 text-indigo-700 shadow-sm font-semibold"
-          class="flex items-center gap-3 px-4 py-3 rounded-xl text-stone-700 hover:bg-stone-50 transition-all duration-200 group"
-        >
-          <lucide-icon
-            [img]="Clock"
-            class="w-5 h-5 transition-transform group-hover:scale-110"
-          ></lucide-icon>
-          <span class="font-medium text-sm">Disponibilidad</span>
-        </a>
+          <a
+            routerLink="/empresa/reservas"
+            (click)="menuAbierto.set(false)"
+            routerLinkActive="admin-nav__link--active"
+            class="admin-nav__link"
+          >
+            <lucide-icon [img]="ClipboardList" class="admin-nav__icon"></lucide-icon>
+            <span>Reservas</span>
+          </a>
+
+          <a
+            routerLink="/empresa/disponibilidad"
+            (click)="menuAbierto.set(false)"
+            routerLinkActive="admin-nav__link--active"
+            class="admin-nav__link"
+          >
+            <lucide-icon [img]="Clock" class="admin-nav__icon"></lucide-icon>
+            <span>Disponibilidad</span>
+          </a>
+        </div>
 
         @if (store.contexto()?.rol === 'owner') {
-          <div class="pt-6 pb-3">
-            <div class="flex items-center gap-2 px-4 mb-2">
-              <lucide-icon [img]="Settings" class="w-4 h-4 text-stone-400"></lucide-icon>
-              <span class="text-xs font-bold text-stone-500 uppercase tracking-widest">
-                Configuración
-              </span>
-            </div>
+          <div class="admin-nav__group">
+            <p class="admin-nav__label">Configuracion</p>
+
+            <a
+              routerLink="/empresa/servicios"
+              (click)="menuAbierto.set(false)"
+              routerLinkActive="admin-nav__link--active"
+              class="admin-nav__link"
+            >
+              <lucide-icon [img]="FileText" class="admin-nav__icon"></lucide-icon>
+              <span>Servicios</span>
+            </a>
+
+            <a
+              routerLink="/empresa/profesional-servicios"
+              (click)="menuAbierto.set(false)"
+              routerLinkActive="admin-nav__link--active"
+              class="admin-nav__link"
+            >
+              <lucide-icon [img]="Users" class="admin-nav__icon"></lucide-icon>
+              <span>Profesionales</span>
+            </a>
+
+            <a
+              routerLink="/empresa/sucursales"
+              (click)="menuAbierto.set(false)"
+              routerLinkActive="admin-nav__link--active"
+              class="admin-nav__link"
+            >
+              <lucide-icon [img]="Building2" class="admin-nav__icon"></lucide-icon>
+              <span>Sucursales</span>
+            </a>
           </div>
-
-          <a
-            routerLink="/empresa/servicios"
-            (click)="menuAbierto.set(false)"
-            routerLinkActive="bg-gradient-to-r from-indigo-50 to-indigo-100 text-indigo-700 shadow-sm font-semibold"
-            class="flex items-center gap-3 px-4 py-3 rounded-xl text-stone-700 hover:bg-stone-50 transition-all duration-200 group"
-          >
-            <lucide-icon
-              [img]="FileText"
-              class="w-5 h-5 transition-transform group-hover:scale-110"
-            ></lucide-icon>
-            <span class="font-medium text-sm">Servicios</span>
-          </a>
-
-          <a
-            routerLink="/empresa/profesional-servicios"
-            (click)="menuAbierto.set(false)"
-            routerLinkActive="bg-gradient-to-r from-indigo-50 to-indigo-100 text-indigo-700 shadow-sm font-semibold"
-            class="flex items-center gap-3 px-4 py-3 rounded-xl text-stone-700 hover:bg-stone-50 transition-all duration-200 group"
-          >
-            <lucide-icon
-              [img]="Users"
-              class="w-5 h-5 transition-transform group-hover:scale-110"
-            ></lucide-icon>
-            <span class="font-medium text-sm">Profesionales</span>
-          </a>
-
-          <a
-            routerLink="/empresa/sucursales"
-            (click)="menuAbierto.set(false)"
-            routerLinkActive="bg-gradient-to-r from-indigo-50 to-indigo-100 text-indigo-700 shadow-sm font-semibold"
-            class="flex items-center gap-3 px-4 py-3 rounded-xl text-stone-700 hover:bg-stone-50 transition-all duration-200 group"
-          >
-            <lucide-icon
-              [img]="Building2"
-              class="w-5 h-5 transition-transform group-hover:scale-110"
-            ></lucide-icon>
-            <span class="font-medium text-sm">Sucursales</span>
-          </a>
         }
       </nav>
 
-      <!-- Footer -->
-      <div class="px-4 py-4 border-t border-stone-200 bg-stone-50">
+      <div class="admin-rail__footer">
         <button
-          (click)="logout()"
-          class="cursor-pointer flex items-center justify-center gap-2 w-full px-4 py-3 rounded-xl bg-stone-100 text-stone-700 hover:bg-stone-200 transition-all duration-200 text-sm font-medium shadow-sm hover:shadow"
+          type="button"
+          class="subscription-trigger"
+          [ngClass]="{
+            'subscription-trigger--slate': trialColor() === 'slate',
+            'subscription-trigger--yellow': trialColor() === 'yellow',
+            'subscription-trigger--red': trialColor() === 'red',
+          }"
+          (click)="togglePanelSuscripcion()"
+          [attr.aria-expanded]="panelSuscripcionAbierto()"
         >
-          <lucide-icon [img]="LogOut" class="w-4 h-4"></lucide-icon>
-          Cerrar sesión
+          <div class="subscription-trigger__content">
+            <div class="subscription-trigger__icon">
+              <lucide-icon [img]="Clock" class="h-4 w-4"></lucide-icon>
+            </div>
+
+            <div class="min-w-0">
+              <p class="subscription-trigger__label">Suscripcion</p>
+              <p class="subscription-trigger__title">{{ estadoSuscripcionTitulo() }}</p>
+              <p class="subscription-trigger__meta">{{ estadoSuscripcionResumen() }}</p>
+            </div>
+          </div>
+
+          <svg
+            class="subscription-trigger__chevron"
+            [class.subscription-trigger__chevron--open]="panelSuscripcionAbierto()"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M6 9l6 6 6-6"
+            />
+          </svg>
+        </button>
+
+        @if (panelSuscripcionAbierto()) {
+          <section
+            class="subscription-panel"
+            [ngClass]="{
+              'subscription-panel--slate': trialColor() === 'slate',
+              'subscription-panel--yellow': trialColor() === 'yellow',
+              'subscription-panel--red': trialColor() === 'red',
+            }"
+          >
+            <div class="subscription-panel__header">
+              <div>
+                <p class="subscription-trigger__label">Estado actual</p>
+                <h3 class="subscription-panel__title">{{ estadoSuscripcionTitulo() }}</h3>
+              </div>
+
+              <span class="subscription-panel__badge">{{ estadoSuscripcionResumen() }}</span>
+            </div>
+
+            <div class="subscription-panel__body">
+              @if (enTrial() && diasRestantes() > 0) {
+                <p class="subscription-panel__copy">
+                  Te quedan <strong>{{ diasRestantes() }} dias</strong> para seguir usando la
+                  cuenta de prueba con todas las herramientas del panel.
+                </p>
+              } @else if (puedeUsarSistema()) {
+                <p class="subscription-panel__copy">
+                  La cuenta esta activa y el sistema se puede usar con normalidad.
+                </p>
+              } @else {
+                <p class="subscription-panel__copy">
+                  La cuenta necesita activacion para volver a administrar reservas,
+                  disponibilidad y equipo.
+                </p>
+              }
+
+              <div class="subscription-panel__points">
+                <div class="subscription-panel__point">
+                  <span class="subscription-panel__dot"></span>
+                  <span>Reservas y agenda en un solo lugar</span>
+                </div>
+                <div class="subscription-panel__point">
+                  <span class="subscription-panel__dot"></span>
+                  <span>Seguimiento operativo del staff</span>
+                </div>
+              </div>
+
+              @if (!puedeUsarSistema() || diasRestantes() <= 3) {
+                <button (click)="irWhatsapp()" class="subscription-panel__cta">
+                  Activar cuenta
+                </button>
+              }
+            </div>
+          </section>
+        }
+
+        <button (click)="logout()" class="admin-rail__logout">
+          <lucide-icon [img]="LogOut" class="h-4 w-4"></lucide-icon>
+          <span>Cerrar sesion</span>
         </button>
       </div>
     </aside>
 
-    <!-- OVERLAY MOBILE -->
     @if (menuAbierto()) {
-      <div
-        class="fixed inset-0 bg-black/40 backdrop-blur-sm z-30 md:hidden transition-opacity duration-300"
+      <button
+        class="admin-shell__overlay"
         (click)="menuAbierto.set(false)"
-      ></div>
+        aria-label="Cerrar menu"
+      ></button>
     }
 
-    <!-- MOBILE HEADER -->
-    <div
-      class="md:hidden sticky top-0 z-20 flex items-center justify-between px-4 py-4 bg-white border-b border-stone-200 shadow-sm"
-    >
-      <button
-        (click)="menuAbierto.set(true)"
-        class="p-2.5 rounded-xl hover:bg-stone-100 active:bg-stone-200 transition-colors"
-      >
-        <svg class="w-6 h-6 text-stone-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            stroke-width="2"
-            d="M4 6h16M4 12h16M4 18h16"
-          />
-        </svg>
-      </button>
-
-      <div class="flex items-center gap-2">
-        <div
-          class="w-8 h-8 rounded-lg flex items-center justify-center"
-          [style.background]="'var(--color-primary)'"
+    <div class="admin-main">
+      <header class="admin-mobile-header">
+        <button
+          (click)="menuAbierto.set(true)"
+          class="admin-mobile-header__menu"
+          aria-label="Abrir menu"
         >
-          <span class="text-white font-bold text-sm">S</span>
+          <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M4 6h16M4 12h16M4 18h16"
+            />
+          </svg>
+        </button>
+
+        <div class="brand-mark brand-mark--mobile">
+          <div
+            class="brand-mark__symbol brand-mark__symbol--mobile"
+            [style.background]="'var(--color-primary)'"
+          >
+            <span>S</span>
+          </div>
+
+          <div>
+            <p class="brand-mark__name">Slation</p>
+            <p class="brand-mark__meta">Admin</p>
+          </div>
         </div>
-        <h1
-          class="text-lg font-bold tracking-tight"
-          style="font-family: 'Plus Jakarta Sans', sans-serif"
-        >
-          Slation
-        </h1>
-      </div>
 
-      <div class="w-10"></div>
+        <div class="admin-mobile-header__spacer"></div>
+      </header>
+
+      <main class="admin-content">
+        <section class="content-canvas">
+          <router-outlet />
+        </section>
+      </main>
     </div>
-
-    <!-- MAIN CONTENT -->
-    <main class="flex-1 flex flex-col min-h-0 overflow-y-auto bg-stone-50">
-      @if (enTrial()) {
-        <div
-          class="w-full text-center text-sm py-3 md:py-3.5 border-b font-medium transition-all duration-300"
-          [ngClass]="{
-            'bg-stone-100 text-stone-700 border-stone-200': trialColor() === 'slate',
-            'bg-linear-to-r from-yellow-100 to-yellow-50 text-yellow-900 border-yellow-200':
-              trialColor() === 'yellow',
-            'bg-linear-to-r from-red-100 to-red-50 text-red-800 border-red-200':
-              trialColor() === 'red',
-          }"
-        >
-          @if (diasRestantes() > 0) {
-            <span class="px-2">
-              Te quedan <strong class="font-bold">{{ diasRestantes() }} días</strong> de prueba
-            </span>
-          } @else {
-            <span class="px-2 font-semibold">Tu prueba terminó</span>
-          }
-
-          @if (diasRestantes() <= 3) {
-            <button
-              (click)="irWhatsapp()"
-              class="ml-3 px-3 py-1.5 rounded-lg bg-white/50 hover:bg-white/80 active:bg-white transition-all duration-200 font-semibold text-xs md:text-sm shadow-sm"
-            >
-              Activar cuenta
-            </button>
-          }
-        </div>
-      }
-
-      <div class="flex-1 max-w-7xl mx-auto w-full px-4 sm:px-6 md:px-8 py-6 md:py-8">
-        <router-outlet />
-      </div>
-    </main>
   </div>
 }

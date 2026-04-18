@@ -152,7 +152,9 @@
 .flatpickr-calendar {
   border-radius: 1rem;
   border: 1px solid #e7e5e4;
-  box-shadow: 0 10px 25px -5px rgba(0,0,0,0.08), 0 4px 10px -6px rgba(0,0,0,0.05);
+  box-shadow:
+    0 10px 25px -5px rgba(0, 0, 0, 0.08),
+    0 4px 10px -6px rgba(0, 0, 0, 0.05);
   font-family: 'Inter', system-ui, sans-serif;
   padding: 8px;
 }
@@ -178,7 +180,9 @@
   padding-top: 4px;
 }
 
-.flatpickr-current-month .numInputWrapper { width: 56px; }
+.flatpickr-current-month .numInputWrapper {
+  width: 56px;
+}
 
 .flatpickr-weekday {
   font-size: 0.75rem;
@@ -196,7 +200,9 @@
   line-height: 36px;
   max-width: 36px;
   border: none;
-  transition: background 0.12s, color 0.12s;
+  transition:
+    background 0.12s,
+    color 0.12s;
 }
 
 .flatpickr-day:hover {

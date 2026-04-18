@@ -1,0 +1,205 @@
+:host {
+  display: block;
+}
+
+.agenda-page__eyebrow {
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: #64748b;
+}
+
+.agenda-page__title {
+  font-size: clamp(1.9rem, 3vw, 2.7rem);
+  line-height: 0.98;
+  font-weight: 700;
+  letter-spacing: -0.06em;
+  color: #020617;
+  text-wrap: balance;
+}
+
+.agenda-page__subtitle {
+  font-size: 0.98rem;
+  line-height: 1.65;
+  color: #475569;
+}
+
+.agenda-page__metric-label,
+.agenda-item__aside-label,
+.agenda-field__label {
+  font-size: 0.74rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #64748b;
+}
+
+.agenda-field {
+  display: grid;
+  gap: 0.55rem;
+}
+
+.agenda-field__control {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.agenda-field__icon {
+  position: absolute;
+  left: 1rem;
+  z-index: 1;
+  display: inline-flex;
+  height: 1rem;
+  width: 1rem;
+  color: #64748b;
+  pointer-events: none;
+}
+
+.agenda-field__icon svg {
+  height: 100%;
+  width: 100%;
+}
+
+.agenda-field__input {
+  width: 100%;
+  border: 1px solid rgba(148, 163, 184, 0.18);
+  border-radius: 1rem;
+  background: rgba(255, 255, 255, 0.96);
+  padding: 0.95rem 1rem 0.95rem 2.9rem;
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: #0f172a;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.88), 0 10px 30px -24px rgba(15, 23, 42, 0.3);
+  transition: border-color 220ms ease, box-shadow 220ms ease;
+}
+
+.agenda-field__input:focus {
+  outline: none;
+  border-color: color-mix(in srgb, var(--color-primary) 22%, rgba(148, 163, 184, 0.22));
+  box-shadow: 0 0 0 4px color-mix(in srgb, var(--color-primary) 10%, transparent);
+}
+
+.agenda-item {
+  display: grid;
+  gap: 1rem;
+  width: 100%;
+  border: 1px solid rgba(148, 163, 184, 0.14);
+  border-radius: 1.2rem;
+  padding: 0.9rem 1rem;
+  background: rgba(255, 255, 255, 0.9);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.82), 0 22px 40px -34px rgba(15, 23, 42, 0.28);
+  transition: transform 220ms cubic-bezier(0.16, 1, 0.3, 1), box-shadow 220ms ease;
+}
+
+.agenda-status {
+  display: inline-flex;
+  width: fit-content;
+  align-items: center;
+  gap: 0.5rem;
+  border-radius: 9999px;
+  padding: 0.45rem 0.8rem;
+  font-size: 0.78rem;
+  font-weight: 600;
+}
+
+.agenda-status__dot {
+  height: 0.45rem;
+  width: 0.45rem;
+  border-radius: 9999px;
+  background: currentColor;
+}
+
+.agenda-status--confirmada {
+  background: #dcfce7;
+  color: #166534;
+}
+
+.agenda-status--cancelada {
+  background: #fee2e2;
+  color: #b91c1c;
+}
+
+.agenda-status--pendiente {
+  background: #fef3c7;
+  color: #92400e;
+}
+
+.agenda-item--confirmada {
+  border-left: 4px solid #22c55e;
+}
+
+.agenda-item--cancelada {
+  border-left: 4px solid #ef4444;
+}
+
+.agenda-item--pendiente {
+  border-left: 4px solid #f59e0b;
+}
+
+.agenda-empty {
+  display: grid;
+  justify-items: start;
+  gap: 1rem;
+  border: 1px dashed rgba(148, 163, 184, 0.24);
+  border-radius: 1.75rem;
+  padding: 2rem 1.25rem;
+  background: rgba(248, 250, 252, 0.68);
+}
+
+.agenda-empty__icon {
+  display: inline-flex;
+  height: 3.5rem;
+  width: 3.5rem;
+  align-items: center;
+  justify-content: center;
+  border-radius: 1rem;
+  background: rgba(255, 255, 255, 0.88);
+  color: #64748b;
+}
+
+.agenda-empty__icon svg {
+  height: 1.5rem;
+  width: 1.5rem;
+}
+
+.agenda-empty__title {
+  font-size: 1.1rem;
+  font-weight: 600;
+  letter-spacing: -0.03em;
+  color: #0f172a;
+}
+
+.agenda-empty__copy {
+  font-size: 0.95rem;
+  line-height: 1.65;
+  color: #64748b;
+}
+
+.agenda-skeleton {
+  position: relative;
+  overflow: hidden;
+  background: linear-gradient(90deg, rgba(226, 232, 240, 0.8), rgba(241, 245, 249, 1), rgba(226, 232, 240, 0.8));
+  background-size: 200% 100%;
+  animation: agendaShimmer 1.25s linear infinite;
+}
+
+.agenda-item--loading {
+  pointer-events: none;
+}
+
+@keyframes agendaShimmer {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+@media (min-width: 640px) {
+  .agenda-item {
+    padding: 1rem 1.1rem;
+  }
+}

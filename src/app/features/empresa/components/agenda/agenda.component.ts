@@ -8,6 +8,7 @@ import { FormsModule } from '@angular/forms';
   selector: 'app-agenda',
   imports: [CommonModule, FormsModule],
   templateUrl: './agenda.component.html',
+  styleUrl: './agenda.component.css',
 })
 export class AgendaComponent {
   store = inject(EmpresaStore);
