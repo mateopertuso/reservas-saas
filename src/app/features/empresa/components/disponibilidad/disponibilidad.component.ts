@@ -3,6 +3,10 @@ import { EmpresaStore } from '../../state/empresa.store';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { EmpresaApi } from '../../services/empresa.api';
+import {
+  AppSelectComponent,
+  SelectOption,
+} from '../../../../shared/components/app-select/app-select.component';
 
 type DisponibilidadItem = {
   id: string;
@@ -25,7 +29,7 @@ type WeekDayColumn = {
 @Component({
   standalone: true,
   selector: 'app-disponibilidad',
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, AppSelectComponent],
   templateUrl: './disponibilidad.component.html',
   styleUrl: './disponibilidad.component.css',
 })
@@ -45,6 +49,10 @@ export class DisponibilidadComponent implements OnInit {
   editFecha = '';
   editInicio = '';
   editFin = '';
+
+  profesionalesOptions = computed<SelectOption[]>(() =>
+    this.store.profesionales().map((p) => ({ label: p.nombre, value: p.id })),
+  );
 
   ngOnInit() {
     const contexto = this.store.contexto();

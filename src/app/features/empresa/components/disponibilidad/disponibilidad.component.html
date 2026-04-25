@@ -31,16 +31,13 @@
       @if (store.contexto()?.rol === 'owner') {
         <label class="availability-field">
           <span class="availability-field__label">Profesional</span>
-          <select
-            [ngModel]="selectedOwnerProfessionalId()"
-            (ngModelChange)="selectOwnerProfessional($event)"
-            class="availability-field__control"
-          >
-            <option value="">Seleccionar profesional</option>
-            @for (p of store.profesionales(); track p.id) {
-              <option [value]="p.id">{{ p.nombre }}</option>
-            }
-          </select>
+          <app-select
+            [options]="profesionalesOptions()"
+            [value]="selectedOwnerProfessionalId() || null"
+            (valueChange)="selectOwnerProfessional($event ?? '')"
+            nullLabel="Seleccionar profesional"
+            placeholder="Seleccionar profesional"
+          />
         </label>
       }
 

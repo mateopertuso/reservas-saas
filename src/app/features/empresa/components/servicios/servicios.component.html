@@ -54,13 +54,13 @@
 
           <label class="services-field">
             <span class="services-field__label">Sucursal</span>
-            <select [(ngModel)]="sucursalId" class="services-field__control">
-              <option value="">Seleccionar sucursal</option>
-
-              @for (s of store.sucursales(); track s.id) {
-                <option [value]="s.id">{{ s.nombre }}</option>
-              }
-            </select>
+            <app-select
+              [options]="sucursalesOptions()"
+              [value]="sucursalId || null"
+              (valueChange)="sucursalId = $event ?? ''"
+              nullLabel="Seleccionar sucursal"
+              placeholder="Seleccionar sucursal"
+            />
           </label>
 
           <button

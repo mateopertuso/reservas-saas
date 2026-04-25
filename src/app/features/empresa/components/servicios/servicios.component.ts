@@ -1,13 +1,17 @@
-import { Component, inject, effect } from '@angular/core';
+import { Component, inject, effect, computed } from '@angular/core';
 import { EmpresaStore } from '../../state/empresa.store';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { SessionService } from '../../../auth/services/session.service';
+import {
+  AppSelectComponent,
+  SelectOption,
+} from '../../../../shared/components/app-select/app-select.component';
 
 @Component({
   selector: 'app-servicios',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, AppSelectComponent],
   templateUrl: './servicios.component.html',
   styleUrl: './servicios.component.css',
 })
@@ -18,6 +22,10 @@ export class ServiciosComponent {
 
   nombre = '';
   sucursalId = '';
+
+  sucursalesOptions = computed<SelectOption[]>(() =>
+    this.store.sucursales().map((s) => ({ label: s.nombre, value: s.id })),
+  );
 
   constructor() {
     effect(() => {

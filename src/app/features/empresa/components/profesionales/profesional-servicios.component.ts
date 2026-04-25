@@ -1,14 +1,19 @@
-import { Component, effect, inject } from '@angular/core';
+import { Component, computed, effect, inject } from '@angular/core';
 import { EmpresaStore } from '../../state/empresa.store';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { SessionService } from '../../../auth/services/session.service';
+import {
+  AppSelectComponent,
+  SelectOption,
+} from '../../../../shared/components/app-select/app-select.component';
 
 @Component({
   standalone: true,
   selector: 'app-profesional-servicios',
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, AppSelectComponent],
   templateUrl: './profesional-servicios.component.html',
+  styleUrls: ['./profesional-servicios.component.css'],
 })
 export class ProfesionalServiciosComponent {
   store = inject(EmpresaStore);
@@ -23,6 +28,14 @@ export class ProfesionalServiciosComponent {
   email = '';
   password = '';
   precio = 0;
+
+  profesionalesOptions = computed<SelectOption[]>(() =>
+    this.store.profesionales().map((p) => ({ label: p.nombre, value: p.id })),
+  );
+
+  sucursalesOptions = computed<SelectOption[]>(() =>
+    this.store.sucursales().map((s) => ({ label: s.nombre, value: s.id })),
+  );
 
   get contexto() {
     return this.session.context();
@@ -126,5 +139,17 @@ export class ProfesionalServiciosComponent {
     if (!this.sucursalSeleccionada) return servicios;
 
     return servicios.filter((s) => s.sucursal_id === this.sucursalSeleccionada);
+  }
+
+  sucursalNombre(id: string) {
+    return this.store.sucursales().find((s) => s.id === id)?.nombre ?? 'Sin sucursal';
+  }
+
+  serviciosPorProfesional(profesionalId: string) {
+    return this.store.profesionalServicios().filter((ps) => ps.profesional_id === profesionalId);
+  }
+
+  profesionalTieneServicios(profesionalId: string) {
+    return this.serviciosPorProfesional(profesionalId).length > 0;
   }
 }

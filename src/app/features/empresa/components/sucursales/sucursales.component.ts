@@ -8,6 +8,7 @@ import { FormsModule } from '@angular/forms';
   selector: 'app-sucursales',
   imports: [CommonModule, FormsModule],
   templateUrl: './sucursales.component.html',
+  styleUrl: './sucursales.component.css',
 })
 export class SucursalesComponent {
   store = inject(EmpresaStore);
